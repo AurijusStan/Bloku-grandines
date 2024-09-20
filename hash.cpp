@@ -46,11 +46,12 @@ string myhash(string i){
     }
 
     for(int i=0; i<64; i++){
-        int num = stoi(h[i]);
+        long long num = stoi(h[i]);
+        num += 14;
         num *= 2743;
         while(num>-1){
             int p=1;
-            int iterations=0;
+            long long iterations=0;
             while(num/p>255){
                 p*=10;
                 iterations++;
@@ -60,8 +61,13 @@ string myhash(string i){
             h2[i]+=c;
             string s = to_string(num);
             s = s.substr(s.size()-iterations);
+            if(s.empty()) break;
             num = stoi(s);
         }
+    }
+
+    for(int i=0; i<64; i++){
+        cout<<h2[i]<<" ";
     }
 
     return endhash;
