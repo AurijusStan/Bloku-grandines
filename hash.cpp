@@ -18,8 +18,8 @@ string myhash(string i){
 
     string binary = stobinary(i);
 
-    if(binary.size()%64!=0){
-        for(int i=0; i<(64-(binary.size()%64)); i++){
+    if(binary.size()%32!=0){
+        for(int i=0; i<(32-(binary.size()%32)); i++){
             if(i%2 == 0){
                 binary += '1';
             } 
@@ -29,26 +29,26 @@ string myhash(string i){
         }
     }
 
-    string h[64]={};
-    string h2[64]={};
+    string h[32]={};
+    string h2[32]={};
     int k = 0;
 
     for(int i=0; i<binary.size(); i++){
         h[k] += (binary[i]);
         k++;
-        if(k==64){
+        if(k==32){
             k=0;
         }
     }
 
-    for(int i=0; i<64; i++){
-        cout<<h[i]<<" ";
-    }
+    // for(int i=0; i<32; i++){
+    //     cout<<h[i]<<" ";
+    // }
 
-    for(int i=0; i<64; i++){
+    for(int i=0; i<32; i++){
         long long num = stoi(h[i]);
-        num += 14;
-        num *= 2743;
+        num += 14+i;
+        num *= 2743-(32-i);
         while(num>-1){
             int p=1;
             long long iterations=0;
@@ -66,8 +66,24 @@ string myhash(string i){
         }
     }
 
-    for(int i=0; i<64; i++){
-        cout<<h2[i]<<" ";
+    for(int i=0; i<32; i++){
+        swap(h2[i][0], h2[i][h2[i].size() - 1]);
+        char b=82+i;
+        h2[i]+b;
+        h[i]=stobinary(h2[i]);
+        if(h[i].size()%2!=0) h[i].pop_back();
+        while(h[i].size()>8){
+            if(h[i].size()%2!=0) h[i].pop_back();
+            int x = stoi(h[i].substr(0, h[i].size()/2), nullptr, 2);
+            int y = stoi(h[i].substr(h[i].size()/2), nullptr, 2);
+            bitset<8> z(x+y);
+            h[i]=z.to_string();
+        }
+        
+    }
+
+    for(int i=0; i<32; i++){
+        cout<<h[i]<<" ";
     }
 
     return endhash;
