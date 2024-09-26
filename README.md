@@ -50,7 +50,7 @@
 | 256 | 4.509 |
 | 512 | 10.136 |
 
-5. Ištestavus su 200000 eilučių, pasitaikė /100000 atvejų, kai porų hash'ai sutapo
+5. Ištestavus su 200000 eilučių, pasitaikė 1/100000 atvejis, kai porų hash'ai sutapo.
 
 ## Išvados
 v0.1 hash funkcija nėra pakankamai gera.
