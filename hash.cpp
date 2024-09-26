@@ -18,6 +18,46 @@ string stobinary(string i){
     return binary;
 }
 
+string skaityti(int i){
+    string input;
+    // cout << "Enter file name without '.txt': ";
+    string failas="random";
+    // cin>>failas;
+
+    ifstream file(failas+".txt");
+
+    if(!file.is_open()){
+        try{
+            throw runtime_error("Wrongly entered data\n"); 
+        }
+        catch(const runtime_error &e){
+            cout<<e.what();
+        }
+    }
+    else{
+        int startLine=i, numLines=1;
+        // cout << "Enter the starting line: ";
+        // cin >> startLine;
+        // cout << "Enter the number of lines to read: ";
+        // cin >> numLines;
+
+        string temp;
+        int currentLine = 1;
+        while(currentLine < startLine && std::getline(file, temp)) {
+            currentLine++;
+        }
+
+        while(numLines > 0 && std::getline(file, temp)){
+            input += temp+" ";
+            numLines--;
+        }
+
+        file.close();
+    }
+
+    return input;
+}
+
 unsigned long long foldBinaryString(const string& binaryStr, size_t chunkSize = 64) {
     unsigned long long foldedNum = 0;
     size_t length = binaryStr.size();
@@ -158,53 +198,25 @@ int main() {
         std::getline(std::cin, input);
     }
     else{
-        // cout << "Enter file name without '.txt': ";
-        string failas="konstitucija";
-        // cin>>failas;
-
-        ifstream file(failas+".txt");
-
-        if(!file.is_open()){
-            try{
-                throw runtime_error("Wrongly entered data\n"); 
-            }
-            catch(const runtime_error &e){
-                cout<<e.what();
-            }
+        int kartojasi=0;
+        for(int i=0; i<100000-2; i++){
+            string input1 = skaityti(i);
+            i++;
+            string input2 = skaityti(i);
+            if(myhash(input1)==myhash(input2)) kartojasi++;
         }
-        else{
-            int startLine=1, numLines;
-            // cout << "Enter the starting line: ";
-            // cin >> startLine;
-            cout << "Enter the number of lines to read: ";
-            cin >> numLines;
-
-            string temp;
-            int currentLine = 1;
-            while(currentLine < startLine && std::getline(file, temp)) {
-                currentLine++;
-            }
-
-            while(numLines > 0 && std::getline(file, temp)){
-                input += temp;
-                numLines--;
-            }
-
-            cout<<input<<endl;
-
-            file.close();
-        }
+        cout<<kartojasi;
     }
     
-    auto start = chrono::high_resolution_clock::now();
+    // auto start = chrono::high_resolution_clock::now();
 
-    string final = myhash(input);
+    // string final = myhash(input);
 
-    auto end = chrono::high_resolution_clock::now();
-    chrono::duration<double, milli> duration=end-start;
+    // auto end = chrono::high_resolution_clock::now();
+    // chrono::duration<double, milli> duration=end-start;
 
-    cout<<"Final hash: "<<final<<endl;
-    cout<<"Time taken to hash: "<<duration.count()<<" milliseconds"<<endl;
+    // cout<<"Final hash: "<<final<<endl;
+    // cout<<"Time taken to hash: "<<duration.count()<<" milliseconds"<<endl;
 
     return 0;
 }
