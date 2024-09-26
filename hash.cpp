@@ -18,6 +18,17 @@ string stobinary(string i){
     return binary;
 }
 
+unsigned long long foldBinaryString(const string& binaryStr, size_t chunkSize = 64) {
+    unsigned long long foldedNum = 0;
+    size_t length = binaryStr.size();
+    for (size_t i = 0; i < length; i += chunkSize) {
+        string chunk = binaryStr.substr(i, chunkSize);
+        unsigned long long num = stoull(chunk, nullptr, 2);
+        foldedNum ^= num;
+    }
+    return foldedNum;
+}
+
 string myhash(string s){
     string endhash;
 
@@ -50,15 +61,17 @@ string myhash(string s){
     }
 
     for(int i=0; i<32; i++){
-        long long num = 0;
-        if (!h[i].empty()) num = stoll(h[i], nullptr, 2);
+        unsigned long long num = 0;
+
+        if (!h[i].empty()) num = foldBinaryString(h[i]);
 
         char originalChar = s[i % s.size()];        
-        num += (originalChar ^ (1487 ^ (i + 1))) % 429967291;
+        num += (originalChar ^ (147 ^ (i + 1))) % 4267291;
         num = (num * ((274 + i) ^ (originalChar + 3153))) ^ ((num >> 3) + 57 * i);
         while(num>-1){
+            if(s.empty()) break;
             int p=1;
-            long long iterations=0;
+            unsigned long long iterations=0;
             while(num/p>255){
                 p*=10;
                 iterations++;
@@ -66,14 +79,23 @@ string myhash(string s){
             char c;
             c = num/p;
             h2[i]+=c;
+            if(p==1) break;
             string s = to_string(num);
             s = s.substr(s.size()-iterations);
             if(s.empty()) break;
-            num = stoll(s);
+            if(!s.empty()) num = stoll(s);
         }
+    }
+
+    for(int i=0; i<32; i++){
+        char originalChar = s[i % s.size()];
+        bitset<8> originalbinary(originalChar);
+        char b=7*(i+1);
+        h2[i]+=b;
+        h[i]=stobinary(h2[i]);
 
         for (int m = 0; m < h[i].size(); m++) {
-            h[i][m] = h[i][m] ^ originalChar; 
+            h[i][m] = h[i][m] ^ originalbinary[m%8]; 
         }
 
         if (i > 0 && i < 31) {
@@ -81,12 +103,12 @@ string myhash(string s){
                 h[i][m] = h[i][m] ^ h[i-1][m % h[i-1].size()] ^ h[i+1][m % h[i+1].size()];
             }
         }
-    }
 
-    for(int i=0; i<32; i++){
-        char b=7*(i+1);
-        h2[i]+=b;
-        h[i]=stobinary(h2[i]);
+        // if (i > 0) {
+        //     for (int m = 0; m < h[0].size(); m++) {
+        //         h[0][m] = h[0][m] ^ h[i][m % h[i].size()];
+        //     }
+        // }
 
         while(h[i].size() % 16 != 0) {
             h[i] += (h[i].size() % 2 == 0) ? '0' : '1';
@@ -96,7 +118,8 @@ string myhash(string s){
             if(h[i].size()%2!=0) h[i].pop_back();
             int x = stoi(h[i].substr(0, h[i].size()/2), nullptr, 2);
             int y = stoi(h[i].substr(h[i].size()/2), nullptr, 2);
-            bitset<8> z((x ^ (y >> 2)) ^ (2953 ^ (i + 7)));
+            bitset<8> z(x ^ y);
+            // bitset<8> z((x ^ (y >> 2)) ^ (2953 ^ (i + 7)));
             h[i]=z.to_string();
         }
         while(h[i].size()<8){
@@ -112,32 +135,32 @@ string myhash(string s){
 int main() {
     string input;
 
-    int x;
-    while(true){
-        cout<<"1-by hand; 2-from file"<<endl;
-        if(!(cin>>x)||x<1||x>2){
-            try{
-                throw runtime_error("Wrongly entered data\n");
-            }
-            catch(const runtime_error &e){
-                cin.clear();
-                cin.ignore();
-                cout<<e.what();
-            }
-        }
-        else break;
-    }
+    int x=2;
+    // while(true){
+    //     cout<<"1-by hand; 2-from file"<<endl;
+    //     if(!(cin>>x)||x<1||x>2){
+    //         try{
+    //             throw runtime_error("Wrongly entered data\n");
+    //         }
+    //         catch(const runtime_error &e){
+    //             cin.clear();
+    //             cin.ignore();
+    //             cout<<e.what();
+    //         }
+    //     }
+    //     else break;
+    // }
 
-    cin.ignore();
+    // cin.ignore();
 
     if(x==1){
         cout << "Enter a line of text: ";
         std::getline(std::cin, input);
     }
     else{
-        cout << "Enter file name without '.txt': ";
-        string failas;
-        cin>>failas;
+        // cout << "Enter file name without '.txt': ";
+        string failas="konstitucija";
+        // cin>>failas;
 
         ifstream file(failas+".txt");
 
@@ -150,9 +173,9 @@ int main() {
             }
         }
         else{
-            int startLine, numLines;
-            cout << "Enter the starting line: ";
-            cin >> startLine;
+            int startLine=1, numLines;
+            // cout << "Enter the starting line: ";
+            // cin >> startLine;
             cout << "Enter the number of lines to read: ";
             cin >> numLines;
 
@@ -167,13 +190,21 @@ int main() {
                 numLines--;
             }
 
+            cout<<input<<endl;
+
             file.close();
         }
     }
     
+    auto start = chrono::high_resolution_clock::now();
+
     string final = myhash(input);
 
-    cout<<"Final hash: "<<final;
+    auto end = chrono::high_resolution_clock::now();
+    chrono::duration<double, milli> duration=end-start;
+
+    cout<<"Final hash: "<<final<<endl;
+    cout<<"Time taken to hash: "<<duration.count()<<" milliseconds"<<endl;
 
     return 0;
 }
