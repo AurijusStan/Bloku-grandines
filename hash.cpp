@@ -4,8 +4,8 @@ using namespace std;
 
 string btohex(string b){
     stringstream ss;
-    bitset<32> bb(b);
-    ss << hex << uppercase << bb.to_ulong();
+    bitset<8> bb(b);
+    ss << hex << uppercase << setw(2) << setfill('0') << bb.to_ulong();
     return ss.str();
 }
 
@@ -36,7 +36,6 @@ string myhash(string s){
             }
         }
     }
-    cout<<binary<<endl;
 
     string h[32]={};
     string h2[32]={};
@@ -85,16 +84,13 @@ string myhash(string s){
     }
 
     for(int i=0; i<32; i++){
-        swap(h2[i][0], h2[i][h2[i].size() - 1]);
-        char b=82+i;
-        h2[i]+b;
+        char b=7*(i+1);
+        h2[i]+=b;
         h[i]=stobinary(h2[i]);
 
-        while(h[i].size() < 10) {
-            h[i] += "1";
+        while(h[i].size() % 16 != 0) {
+            h[i] += (h[i].size() % 2 == 0) ? '0' : '1';
         }
-
-        if(h[i].size()%2!=0) h[i].pop_back();
 
         while(h[i].size()>8){
             if(h[i].size()%2!=0) h[i].pop_back();
@@ -103,6 +99,10 @@ string myhash(string s){
             bitset<8> z((x ^ (y >> 2)) ^ (2953 ^ (i + 7)));
             h[i]=z.to_string();
         }
+        while(h[i].size()<8){
+            h[i]="0" + h[i];
+        }
+
         endhash += btohex(h[i]);
     }
 
@@ -112,10 +112,65 @@ string myhash(string s){
 int main() {
     string input;
 
-    cout << "Enter a line of text: ";
+    int x;
+    while(true){
+        cout<<"1-by hand; 2-from file"<<endl;
+        if(!(cin>>x)||x<1||x>2){
+            try{
+                throw runtime_error("Wrongly entered data\n");
+            }
+            catch(const runtime_error &e){
+                cin.clear();
+                cin.ignore();
+                cout<<e.what();
+            }
+        }
+        else break;
+    }
 
-    std::getline(std::cin, input);
+    cin.ignore();
 
+    if(x==1){
+        cout << "Enter a line of text: ";
+        std::getline(std::cin, input);
+    }
+    else{
+        cout << "Enter file name without '.txt': ";
+        string failas;
+        cin>>failas;
+
+        ifstream file(failas+".txt");
+
+        if(!file.is_open()){
+            try{
+                throw runtime_error("Wrongly entered data\n"); 
+            }
+            catch(const runtime_error &e){
+                cout<<e.what();
+            }
+        }
+        else{
+            int startLine, numLines;
+            cout << "Enter the starting line: ";
+            cin >> startLine;
+            cout << "Enter the number of lines to read: ";
+            cin >> numLines;
+
+            string temp;
+            int currentLine = 1;
+            while(currentLine < startLine && std::getline(file, temp)) {
+                currentLine++;
+            }
+
+            while(numLines > 0 && std::getline(file, temp)){
+                input += temp;
+                numLines--;
+            }
+
+            file.close();
+        }
+    }
+    
     string final = myhash(input);
 
     cout<<"Final hash: "<<final;
