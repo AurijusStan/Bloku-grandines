@@ -49,3 +49,10 @@
 | 128 | 2.076 |
 | 256 | 4.509 |
 | 512 | 10.136 |
+
+5. Ištestavus su 200000 eilučių, pasitaikė /100000 atvejų, kai porų hash'ai sutapo
+
+## Išvados
+v0.1 hash funkcija nėra pakankamai gera.
+Ji nepasižymi labai matomu lavinos efektu, ypač kai apdorojami inputai ilgi, jau nuo keliasdešimties simbolių matydavosi, kad hash'ai išeina labai panašūs.
+Tai reikia patobulinti v2.0 ir jau turiu idėjų kaip tai padaryti.
