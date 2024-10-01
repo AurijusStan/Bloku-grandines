@@ -199,7 +199,7 @@ int main() {
     }
     else{
         int kartojasi=0;
-        for(int i=0; i<100000-2; i++){
+        for(int i=0; i<50000; i++){
             string input1 = skaityti(i);
             i++;
             string input2 = skaityti(i);
