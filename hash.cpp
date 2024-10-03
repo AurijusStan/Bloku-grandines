@@ -2,51 +2,44 @@
 
 using namespace std;
 
-string btohex(string b){
+string btohex(const bitset<8>& b) {
     stringstream ss;
-    bitset<8> bb(b);
-    ss << hex << uppercase << setw(2) << setfill('0') << bb.to_ulong();
+    ss << hex << uppercase << setw(2) << setfill('0') << b.to_ulong();
     return ss.str();
 }
 
-string stobinary(string i){
+string stobinary(string i) {
     string binary;
-    for(char c : i){
+    for (char c : i) {
         bitset<8> b(c);
         binary += b.to_string();
     }
     return binary;
 }
 
-string skaityti(int i){
+string skaityti(int i) {
     string input;
-    string failas="konstitucija";
+    string failas = "konstitucija";
 
-    ifstream file(failas+".txt");
+    ifstream file(failas + ".txt");
 
-    if(!file.is_open()){
-        try{
-            throw runtime_error("Wrongly entered data\n"); 
+    if (!file.is_open()) {
+        try {
+            throw runtime_error("Wrongly entered data\n");
+        } catch (const runtime_error &e) {
+            cout << e.what();
         }
-        catch(const runtime_error &e){
-            cout<<e.what();
-        }
-    }
-    else{
-        int startLine=i, numLines=3;
-        // cout << "Enter the starting line: ";
-        // cin >> startLine;
-        // cout << "Enter the number of lines to read: ";
-        // cin >> numLines;
-
+    } 
+    else {
+        int startLine = i, numLines = 4;
         string temp;
         int currentLine = 1;
-        while(currentLine < startLine && std::getline(file, temp)) {
+        while (currentLine < startLine && getline(file, temp)) {
             currentLine++;
         }
 
-        while(numLines > 0 && std::getline(file, temp)){
-            input += temp+" ";
+        while (numLines > 0 && getline(file, temp)) {
+            input += temp + " ";
             numLines--;
         }
 
@@ -67,31 +60,33 @@ unsigned long long foldBinaryString(const string& binaryStr, size_t chunkSize = 
     return foldedNum;
 }
 
-string myhash(string s){
-    string endhash;
-    const size_t blockSize = 64;
+string myhash(string s) {
+    const size_t blockSize = 64; 
+    const size_t targetHashSize = 64; 
 
     string binary = stobinary(s);
 
-    if(binary.size() % 512 != 0){
+    if (binary.size() % 512 != 0) {
         int paddingSize = 512 - (binary.size() % 512);
-        binary.append(paddingSize, '1');
+        binary.append(paddingSize, '1');  
     }
 
-    for(size_t i = 0; i < binary.size(); i += 512){
+    bitset<256> finalHash; 
+
+    for (size_t i = 0; i < binary.size(); i += 512) {
         string block = binary.substr(i, 512);
-        string h[32] = {}, h2[32] = {};
+        string h[32] = {};
         int k = 0;
 
-        for(int j = 0; j < block.size(); j++){
+        for (int j = 0; j < block.size(); j++) {
             h[k] += block[j];
             k++;
-            if(k == 32){
+            if (k == 32) {
                 k = 0;
             }
         }
 
-        for(int i = 0; i < 32; i++){
+        for (int i = 0; i < 32; i++) {
             unsigned long long num = 0;
 
             if (!h[i].empty()) num = foldBinaryString(h[i]);
@@ -99,96 +94,57 @@ string myhash(string s){
             char originalChar = s[i % s.size()];
             num += (originalChar ^ (147 ^ (i + 1))) % 4267291;
             num = (num * ((274 + i) ^ (originalChar + 3153))) ^ ((num >> 3) + 57 * i);
-            while(num > -1){
-                if(s.empty()) break;
-                int p = 1;
-                unsigned long long iterations = 0;
-                while(num / p > 255){
-                    p *= 10;
-                    iterations++;
-                }
-                char c;
-                c = num / p;
-                h2[i] += c;
-                if(p == 1) break;
-                string s = to_string(num);
-                s = s.substr(s.size() - iterations);
-                if(s.empty()) break;
-                if(!s.empty()) num = stoll(s);
+            bitset<8> compressedNum(num & 0xFF); 
+            size_t finalHashStart = (i * 8) % 256;
+            for (size_t j = 0; j < 8; j++) {
+                finalHash[finalHashStart + j] = finalHash[finalHashStart + j] ^ static_cast<bool>(compressedNum[j]);
             }
-        }
-
-        for(int i = 0; i < 32; i++){
-            char originalChar = s[i % s.size()];
-            bitset<8> originalbinary(originalChar);
-            char b = 7 * (i + 1);
-            h2[i] += b;
-            h[i] = stobinary(h2[i]);
-
-            for (int m = 0; m < h[i].size(); m++) {
-                h[i][m] = h[i][m] ^ originalbinary[m % 8];
-            }
-
-            if (i > 0 && i < 31) {
-                for (int m = 0; m < h[i].size(); m++) {
-                    h[i][m] = h[i][m] ^ h[i - 1][m % h[i - 1].size()] ^ h[i + 1][m % h[i + 1].size()];
-                }
-            }
-
-            if (i > 0) {
-                for (int m = 0; m < h[0].size(); m++) {
-                    h[0][m] = h[0][m] ^ h[i][m % h[i].size()];
-                }
-            }
-
-            while(h[i].size() % 16 != 0) {
-                h[i] += (h[i].size() % 2 == 0) ? '0' : '1';
-            }
-
-            while(h[i].size() > 8){
-                if(h[i].size() % 2 != 0) h[i].pop_back();
-                int x = stoi(h[i].substr(0, h[i].size() / 2), nullptr, 2);
-                int y = stoi(h[i].substr(h[i].size() / 2), nullptr, 2);
-                bitset<8> z((x ^ (y >> 2)) ^ (2953 ^ (i + 7)));
-                h[i] = z.to_string();
-            }
-            while(h[i].size() < 8){
-                h[i] = "0" + h[i];
-            }
-
-            endhash += btohex(h[i]);
         }
     }
 
-    return endhash;
+    stringstream ss;
+    for (size_t i = 0; i < 256; i += 8) {
+        bitset<8> byte(finalHash.to_string().substr(i, 8));
+        ss << btohex(byte);
+    }
+
+    string finalHexHash = ss.str();
+
+    if (finalHexHash.size() > targetHashSize) {
+        finalHexHash = finalHexHash.substr(0, targetHashSize);
+    } else {
+        while (finalHexHash.size() < targetHashSize) {
+            finalHexHash = "0" + finalHexHash;
+        }
+    }
+
+    return finalHexHash;
 }
 
 int main() {
     string input;
     int x;
 
-    while(true){
+    while (true) {
         cout << "1 - by hand; 2 - from file" << endl;
-        if(!(cin >> x) || x < 1 || x > 2){
-            try{
+        if (!(cin >> x) || x < 1 || x > 2) {
+            try {
                 throw runtime_error("Wrongly entered data\n");
-            }
-            catch(const runtime_error &e){
+            } catch (const runtime_error &e) {
                 cin.clear();
                 cin.ignore();
                 cout << e.what();
             }
-        }
-        else break;
+        } else break;
     }
 
     cin.ignore();
 
-    if(x == 1){
+    if (x == 1) {
         cout << "Enter a line of text: ";
-        std::getline(std::cin, input);
-    }
-    else{
+        getline(cin, input);
+    } 
+    else {
         // int kartojasi = 0;
         // for(int i = 0; i < 100; i++){
         //     string input1 = skaityti(i);
