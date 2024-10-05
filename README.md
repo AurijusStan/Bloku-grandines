@@ -1,6 +1,6 @@
 # Hash funkcija
 
-# Versija v0.1
+# Versija v0.2
 ## Pseudo-kodas
 
 1. input(by hand/from file);
@@ -39,18 +39,18 @@
 ### Efektyvumo skaičiavimai (3 testų vidurkis)
 | Eilučių sk. | Hash'inimo trukmė (ms) |
 | :--- | ---- |
-| 1 | 0 |
-| 2 | 0 |
-| 4 | 0 |
-| 8 | 0 |
-| 16 | 1 |
-| 32 | 1 |
-| 64 | 1 |
-| 128 | 2.076 |
-| 256 | 4.509 |
-| 512 | 10.136 |
+| 1 | 1.18 |
+| 2 | 1.79 |
+| 4 | 1.81 |
+| 8 | 2.15 |
+| 16 | 5.67 |
+| 32 | 10.18 |
+| 64 | 19.54 |
+| 128 | 48.54 |
+| 256 | 103.67 |
+| 512 | 243.77 |
 
-5. Ištestavus su 200000 eilučių, pasitaikė 1/100000 atvejis, kai porų hash'ai sutapo.
+5. Ištestavus su 200000 eilučių, pasitaikė 0/100000 atvejų, kai porų hash'ai sutapo.
 
 ## Išvados
 v0.1 hash funkcija nėra pakankamai gera.

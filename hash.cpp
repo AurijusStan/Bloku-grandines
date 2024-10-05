@@ -17,37 +17,7 @@ string stobinary(string i) {
     return binary;
 }
 
-string skaityti(int i) {
-    string input;
-    string failas = "t2";
 
-    ifstream file(failas + ".txt");
-
-    if (!file.is_open()) {
-        try {
-            throw runtime_error("Wrongly entered data\n");
-        } catch (const runtime_error &e) {
-            cout << e.what();
-        }
-    } 
-    else {
-        int startLine = i, numLines = 1;
-        string temp;
-        int currentLine = 1;
-        while (currentLine < startLine && getline(file, temp)) {
-            currentLine++;
-        }
-
-        while (numLines > 0 && getline(file, temp)) {
-            input += temp + " ";
-            numLines--;
-        }
-
-        file.close();
-    }
-
-    return input;
-}
 
 unsigned long long foldBinaryString(const string& binaryStr, size_t chunkSize = 64) {
     unsigned long long foldedNum = 0;
@@ -166,39 +136,66 @@ string myhash(string s) {
     return finalHexHash;
 }
 
-int main() {
+string skaityti(int i) {
     string input;
-    int x;
+    string failas = "konstitucija";
 
-    while (true) {
-        cout << "1 - by hand; 2 - from file" << endl;
-        if (!(cin >> x) || x < 1 || x > 2) {
-            try {
-                throw runtime_error("Wrongly entered data\n");
-            } catch (const runtime_error &e) {
-                cin.clear();
-                cin.ignore();
-                cout << e.what();
-            }
-        } else break;
+    ifstream file(failas + ".txt");
+
+    if (!file.is_open()) {
+        try {
+            throw runtime_error("Wrongly entered data\n");
+        } catch (const runtime_error &e) {
+            cout << e.what();
+        }
+    } 
+    else {
+        int startLine = i, numLines = 512;
+        string temp;
+        int currentLine = 1;
+        while (currentLine < startLine && getline(file, temp)) {
+            currentLine++;
+        }
+
+        while (numLines > 0 && getline(file, temp)) {
+            input += temp + " ";
+            numLines--;
+            // getline(file, temp);
+            // if(myhash(input) == myhash(temp)) i++;
+            // input = "";
+            // numLines--;
+        }
+
+        file.close();
     }
 
-    cin.ignore();
+    return input;
+}
+
+int main() {
+    string input;
+    int x=2;
+
+    // while (true) {
+    //     cout << "1 - by hand; 2 - from file" << endl;
+    //     if (!(cin >> x) || x < 1 || x > 2) {
+    //         try {
+    //             throw runtime_error("Wrongly entered data\n");
+    //         } catch (const runtime_error &e) {
+    //             cin.clear();
+    //             cin.ignore();
+    //             cout << e.what();
+    //         }
+    //     } else break;
+    // }
+
+    // cin.ignore();
 
     if (x == 1) {
         cout << "Enter a line of text: ";
         getline(cin, input);
     } 
     else {
-        // int kartojasi = 0;
-        // for(int i = 0; i < 100; i++){
-        //     string input1 = skaityti(i);
-        //     i++;
-        //     string input2 = skaityti(i);
-        //     if(myhash(input1) == myhash(input2)) kartojasi++;
-        // }
-        // cout << kartojasi;
-
         input = skaityti(1);
     }
     
