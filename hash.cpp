@@ -19,7 +19,7 @@ string stobinary(string i) {
 
 string skaityti(int i) {
     string input;
-    string failas = "konstitucija";
+    string failas = "t2";
 
     ifstream file(failas + ".txt");
 
@@ -31,7 +31,7 @@ string skaityti(int i) {
         }
     } 
     else {
-        int startLine = i, numLines = 4;
+        int startLine = i, numLines = 1;
         string temp;
         int currentLine = 1;
         while (currentLine < startLine && getline(file, temp)) {
@@ -52,12 +52,27 @@ string skaityti(int i) {
 unsigned long long foldBinaryString(const string& binaryStr, size_t chunkSize = 64) {
     unsigned long long foldedNum = 0;
     size_t length = binaryStr.size();
+
     for (size_t i = 0; i < length; i += chunkSize) {
         string chunk = binaryStr.substr(i, chunkSize);
+        
+        if (chunk.empty()) {
+            continue; 
+        }
+
+        if (chunk.find_first_not_of("01") != string::npos) {
+            continue;
+        }
+
         unsigned long long num = stoull(chunk, nullptr, 2);
         foldedNum ^= num;
     }
     return foldedNum;
+}
+
+
+unsigned long long rotateLeft(unsigned long long value, int shift, int bits = 64) {
+    return (value << shift) | (value >> (bits - shift));
 }
 
 string myhash(string s) {
@@ -87,13 +102,43 @@ string myhash(string s) {
         }
 
         for (int i = 0; i < 32; i++) {
+            char originalChar = s[i % s.size()];
+            bitset<8> originalbinary(originalChar);
+            char b = 7 * (i + 1);
+            h[i] += b;
+            h[i] = stobinary(h[i]);
+
+            for (int m = 0; m < h[i].size(); m++) {
+                h[i][m] = h[i][m] ^ originalbinary[m % 8];
+            }
+
+            if (i > 0 && i < 31) {
+                for (int m = 0; m < h[i].size(); m++) {
+                    h[i][m] = h[i][m] ^ h[i - 1][m % h[i - 1].size()] ^ h[i + 1][m % h[i + 1].size()];
+                }
+            }
+
+            if (i > 0) {
+                for (int m = 0; m < h[0].size(); m++) {
+                    h[0][m] = h[0][m] ^ h[i][m % h[i].size()];
+                }
+            }
+        }
+
+        for (int i = 0; i < 32; i++) {
             unsigned long long num = 0;
 
             if (!h[i].empty()) num = foldBinaryString(h[i]);
 
             char originalChar = s[i % s.size()];
-            num += (originalChar ^ (147 ^ (i + 1))) % 4267291;
-            num = (num * ((274 + i) ^ (originalChar + 3153))) ^ ((num >> 3) + 57 * i);
+
+            for(int j = 0; j < 5; j++){
+                num += (originalChar ^ (147 ^ (i + 1))) % 4267291;
+                num = (num * ((274 + i) ^ (originalChar + 3153))) ^ ((num >> 3) + 57 * i);
+                num = rotateLeft(num, (j + i) % 64);
+            }
+            
+
             bitset<8> compressedNum(num & 0xFF); 
             size_t finalHashStart = (i * 8) % 256;
             for (size_t j = 0; j < 8; j++) {
