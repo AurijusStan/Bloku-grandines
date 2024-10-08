@@ -17,8 +17,6 @@ string stobinary(string i) {
     return binary;
 }
 
-
-
 unsigned long long foldBinaryString(const string& binaryStr, size_t chunkSize = 64) {
     unsigned long long foldedNum = 0;
     size_t length = binaryStr.size();
@@ -46,7 +44,6 @@ unsigned long long rotateLeft(unsigned long long value, int shift, int bits = 64
 }
 
 string myhash(string s) {
-    const size_t blockSize = 64; 
     const size_t targetHashSize = 64; 
 
     string binary = stobinary(s);
@@ -174,22 +171,22 @@ string skaityti(int i) {
 
 int main() {
     string input;
-    int x=2;
+    int x;
 
-    // while (true) {
-    //     cout << "1 - by hand; 2 - from file" << endl;
-    //     if (!(cin >> x) || x < 1 || x > 2) {
-    //         try {
-    //             throw runtime_error("Wrongly entered data\n");
-    //         } catch (const runtime_error &e) {
-    //             cin.clear();
-    //             cin.ignore();
-    //             cout << e.what();
-    //         }
-    //     } else break;
-    // }
+    while (true) {
+        cout << "1 - by hand; 2 - from file" << endl;
+        if (!(cin >> x) || x < 1 || x > 2) {
+            try {
+                throw runtime_error("Wrongly entered data\n");
+            } catch (const runtime_error &e) {
+                cin.clear();
+                cin.ignore();
+                cout << e.what();
+            }
+        } else break;
+    }
 
-    // cin.ignore();
+    cin.ignore();
 
     if (x == 1) {
         cout << "Enter a line of text: ";
