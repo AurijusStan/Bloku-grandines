@@ -63,6 +63,9 @@ t2=3CFCA9A00502F7DCDEDE675307840FF5030E5340E855FF771E72886B1AE262CD
 
 5. Ištestavus su 200000 eilučių, pasitaikė 0/100000 atvejų, kai porų hash'ai sutapo.
 
+6. Sutapimai hex lygmenyje sudaro 3.13%
+Bit-lygmenyje 30.58%
+
 ## Išvados
 v0.1 hash funkcija nėra pakankamai gera.
 Ji nepasižymi labai matomu lavinos efektu, ypač kai apdorojami inputai ilgi, jau nuo keliasdešimties simbolių matydavosi, kad hash'ai išeina labai panašūs.

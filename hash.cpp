@@ -131,9 +131,9 @@ string myhash(string s) {
     return finalHexHash;
 }
 
-string skaityti(int &i) {
+string skaityti(double &i, double &b) {
     string input;
-    string failas = "random";
+    string failas = "random_skirias1";
 
     ifstream file(failas + ".txt");
 
@@ -145,7 +145,7 @@ string skaityti(int &i) {
         }
     } 
     else {
-        int startLine = 1, numLines = 200000-2;
+        int startLine = 1, numLines = 200000;
         string temp;
         int currentLine = 1;
         while (currentLine < startLine && getline(file, temp)) {
@@ -155,11 +155,32 @@ string skaityti(int &i) {
         while (numLines > 0 && getline(file, temp)) {
             input += temp + " ";
             numLines--;
+            //// kolizijos
+            // getline(file, temp);
+            // if(myhash(input) == myhash(temp)) i++;
+            // input = "";
+            // numLines--;
+            //// skirtingumas
             getline(file, temp);
-            if(myhash(input) == myhash(temp)) i++;
+            string h1=myhash(input);
+            string h2=myhash(temp);
+            for(int j=0; j<64; j++){
+                if(h1[j] == h2[j]) i++;
+            }
+            string b1=stobinary(h1);
+            string b2=stobinary(h2);
+            for(int j=0; j<256; j++){
+                if(b1[j] == b2[j]) b++;
+            }
+
             input = "";
             numLines--;
         }
+        //// skirtingumas
+        i/=(64*200000);
+        i*=100;
+        b/=(256*200000);
+        b*=100;
 
         file.close();
     }
@@ -191,9 +212,11 @@ int main() {
         getline(cin, input);
     } 
     else {
-        int i;
-        input = skaityti(i);
-        cout<<i;
+        double i=0;
+        double b=0;
+        input = skaityti(i, b);
+        cout<<"Hex sutapimas: "<<i<<endl;
+        cout<<"Binary sutapimas: "<<b<<endl;
     }
     
     // auto start = chrono::high_resolution_clock::now();
