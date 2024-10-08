@@ -40,9 +40,11 @@ Konvertuojamas finalHash į teisingą ilgį
 
 1. Visi rezultatai gaunami 64 simbolių ilgio
 2. Rezultatai, kai input'inta po vieną simbolį, drastiškai skiriasi:
-hash("a")=4EE68DE631D18732BCDF9D41AE88AB89FAB16A29564776EA6D5EF0C40B6FFA66
-hasb("b")=6143765589BC0356705CAAE7D0275840F9343FCD611C7A8D11CC4C790A39B8EA
-3. Rezultatai, kai input'inta labai daug simbolių, identiški
+hash("a")=EEF28D240D0CCAA7E795D194530EABA7E7119C7D24740A2A298430B74043A87D
+hasb("b")=34005DDFA4BCAFCB6F5C9E5AC5B77559BB5C08E81BDE52366C436D5DB7613877
+3. Sukūrus 2 failus, kuriuose yra 1200 simbolių eilutės, kurios skiriasi vienu simboliu, hash'ai gauti tokie:
+t1=9F3DAC5BA1BD214A00EFA12EE4951BAD04430F75DF8C67C1BEB52AC895838C11
+t2=3CFCA9A00502F7DCDEDE675307840FF5030E5340E855FF771E72886B1AE262CD
 4. Su tuo pačiu input'u, rezultatas visada vienodas
 
 ### Efektyvumo skaičiavimai (3 testų vidurkis)
@@ -51,13 +53,13 @@ hasb("b")=6143765589BC0356705CAAE7D0275840F9343FCD611C7A8D11CC4C790A39B8EA
 | 1 | 1.18 |
 | 2 | 1.79 |
 | 4 | 1.81 |
-| 8 | 2.15 |
-| 16 | 5.67 |
-| 32 | 10.18 |
-| 64 | 19.54 |
-| 128 | 48.54 |
-| 256 | 103.67 |
-| 512 | 243.77 |
+| 8 | 2.75 |
+| 16 | 6.02 |
+| 32 | 12.26 |
+| 64 | 25.42 |
+| 128 | 59.29 |
+| 256 | 130.21 |
+| 512 | 294.05 |
 
 5. Ištestavus su 200000 eilučių, pasitaikė 0/100000 atvejų, kai porų hash'ai sutapo.
 

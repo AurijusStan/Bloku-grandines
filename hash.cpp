@@ -38,7 +38,6 @@ unsigned long long foldBinaryString(const string& binaryStr, size_t chunkSize = 
     return foldedNum;
 }
 
-
 unsigned long long rotateLeft(unsigned long long value, int shift, int bits = 64) {
     return (value << shift) | (value >> (bits - shift));
 }
@@ -68,47 +67,46 @@ string myhash(string s) {
             }
         }
 
-        for (int i = 0; i < 32; i++) {
-            char originalChar = s[i % s.size()];
+        for (int k = 0; k < 32; k++) {
+            char originalChar = s[k % s.size()];
             bitset<8> originalbinary(originalChar);
-            char b = 7 * (i + 1);
-            h[i] += b;
-            h[i] = stobinary(h[i]);
+            char b = 7 * (k + 1);
+            h[k] += b;
+            h[k] = stobinary(h[k]);
 
-            for (int m = 0; m < h[i].size(); m++) {
-                h[i][m] = h[i][m] ^ originalbinary[m % 8];
+            for (int m = 0; m < h[k].size(); m++) {
+                h[k][m] = h[k][m] ^ originalbinary[m % 8];
             }
 
-            if (i > 0 && i < 31) {
-                for (int m = 0; m < h[i].size(); m++) {
-                    h[i][m] = h[i][m] ^ h[i - 1][m % h[i - 1].size()] ^ h[i + 1][m % h[i + 1].size()];
+            if (k > 0 && k < 31) {
+                for (int m = 0; m < h[k].size(); m++) {
+                    h[k][m] = h[k][m] ^ h[k - 1][m % h[k - 1].size()] ^ h[k + 1][m % h[k + 1].size()];
                 }
             }
 
-            if (i > 0) {
+            if (k > 0) {
                 for (int m = 0; m < h[0].size(); m++) {
-                    h[0][m] = h[0][m] ^ h[i][m % h[i].size()];
+                    h[0][m] = h[0][m] ^ h[k][m % h[k].size()];
                 }
             }
         }
 
-        for (int i = 0; i < 32; i++) {
+        for (int k = 0; k < 32; k++) {
             unsigned long long num = 0;
 
-            if (!h[i].empty()) num = foldBinaryString(h[i]);
+            if (!h[k].empty()) num = foldBinaryString(h[k]);
 
-            char originalChar = s[i % s.size()];
+            char originalChar = s[k % s.size()];
 
             for(int j = 0; j < 5; j++){
-                num += (originalChar ^ (147 ^ (i + 1))) % 4267291;
-                num = (num * ((274 + i) ^ (originalChar + 3153))) ^ ((num >> 3) + 57 * i);
-                num = rotateLeft(num, (j + i) % 64);
+                num += (originalChar ^ (147 ^ (k + 1))) % 4267291;
+                num = (num * ((274 + k) ^ (originalChar + 3153))) ^ ((num >> 3) + 57 * k);
+                num = rotateLeft(num, (j + k) % 64);
             }
-            
 
-            bitset<8> compressedNum(num & 0xFF); 
-            size_t finalHashStart = (i * 8) % 256;
-            for (size_t j = 0; j < 8; j++) {
+            bitset<64> compressedNum(num); 
+            size_t finalHashStart = (k * 64) % 256;
+            for (size_t j = 0; j < 64; j++) {
                 finalHash[finalHashStart + j] = finalHash[finalHashStart + j] ^ static_cast<bool>(compressedNum[j]);
             }
         }
@@ -133,9 +131,9 @@ string myhash(string s) {
     return finalHexHash;
 }
 
-string skaityti(int i) {
+string skaityti(int &i) {
     string input;
-    string failas = "konstitucija";
+    string failas = "random";
 
     ifstream file(failas + ".txt");
 
@@ -147,7 +145,7 @@ string skaityti(int i) {
         }
     } 
     else {
-        int startLine = i, numLines = 512;
+        int startLine = 1, numLines = 200000-2;
         string temp;
         int currentLine = 1;
         while (currentLine < startLine && getline(file, temp)) {
@@ -157,10 +155,10 @@ string skaityti(int i) {
         while (numLines > 0 && getline(file, temp)) {
             input += temp + " ";
             numLines--;
-            // getline(file, temp);
-            // if(myhash(input) == myhash(temp)) i++;
-            // input = "";
-            // numLines--;
+            getline(file, temp);
+            if(myhash(input) == myhash(temp)) i++;
+            input = "";
+            numLines--;
         }
 
         file.close();
@@ -193,18 +191,20 @@ int main() {
         getline(cin, input);
     } 
     else {
-        input = skaityti(1);
+        int i;
+        input = skaityti(i);
+        cout<<i;
     }
     
-    auto start = chrono::high_resolution_clock::now();
+    // auto start = chrono::high_resolution_clock::now();
 
-    string final = myhash(input);
+    // string final = myhash(input);
 
-    auto end = chrono::high_resolution_clock::now();
-    chrono::duration<double, milli> duration = end - start;
+    // auto end = chrono::high_resolution_clock::now();
+    // chrono::duration<double, milli> duration = end - start;
 
-    cout << "Final hash: " << final << endl;
-    cout << "Time taken to hash: " << duration.count() << " milliseconds" << endl;
+    // cout << "Final hash: " << final << endl;
+    // cout << "Time taken to hash: " << duration.count() << " milliseconds" << endl;
 
     return 0;
 }
