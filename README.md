@@ -67,12 +67,13 @@ t2=3CFCA9A00502F7DCDEDE675307840FF5030E5340E855FF771E72886B1AE262CD
 
 ### Lavinos efekto testavimas
 Testuota su 100000 skintingų ilgių porų, tarp kurių skiriasi tik vienas simbolis:
-    | Hex average sutapimas | 6.3% |
-    | Hex min sutapimas | 0% |
-    | Hex max sutapimas | 37.5% |
-    | Binary average sutapimas | 61.2% |
-    | Binary min sutapimas | 43.4% |
-    | Binary max sutapimas | 83.9% |
+
+- Hex average sutapimas: 6.3%
+- Hex min sutapimas: 0%
+- Hex max sutapimas: 37.5%
+- Binary average sutapimas: 61.16%
+- Binary min sutapimas: 43.4%
+- Binary max sutapimas: 83.9%
 
 ## Išvados
 v0.2 yra daug geresnė versija už v0.1
