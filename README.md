@@ -63,6 +63,7 @@ t2=3CFCA9A00502F7DCDEDE675307840FF5030E5340E855FF771E72886B1AE262CD
 
 ![alt text](image.png)
 
+
 5. Ištestavus su 200000 eilučių, pasitaikė 0/100000 atvejų, kai porų hash'ai sutapo
 
 ### Lavinos efekto testavimas
@@ -76,6 +77,6 @@ Testuota su 100000 skintingų ilgių porų, tarp kurių skiriasi tik vienas simb
 - Binary max sutapimas: 83.9%
 
 ## Išvados
-v0.2 yra daug geresnė versija už v0.1
-Nerandu labai ryškių problemų
-Reiktų dar palyginti efektyvumą su keliais kitais algoritmais su ta pačia kompiuterine įranga, kad galutinai įvertinti efektyvumą
+* v0.2 yra daug geresnė versija už v0.1
+* Nerandu labai ryškių problemų
+* Reiktų dar palyginti efektyvumą su keliais kitais algoritmais su ta pačia kompiuterine įranga, kad galutinai įvertinti efektyvumą
