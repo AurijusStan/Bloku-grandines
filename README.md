@@ -61,12 +61,18 @@ t2=3CFCA9A00502F7DCDEDE675307840FF5030E5340E855FF771E72886B1AE262CD
 | 256 | 130.21 |
 | 512 | 294.05 |
 
-5. Ištestavus su 200000 eilučių, pasitaikė 0/100000 atvejų, kai porų hash'ai sutapo.
+5. Ištestavus su 200000 eilučių, pasitaikė 0/100000 atvejų, kai porų hash'ai sutapo
 
-6. Sutapimai hex lygmenyje sudaro 3.13%
-Bit-lygmenyje 30.58%
+### Lavinos efekto testavimas
+Testuota su 100000 skintingų ilgių porų, tarp kurių skiriasi tik vienas simbolis:
+Hex average sutapimas: 6.3%
+Hex min sutapimas: 0%
+Hex max sutapimas: 37.5%
+Binary average sutapimas: 61.2%
+Binary min sutapimas: 43.4%
+Binary max sutapimas: 83.9%
 
 ## Išvados
-v0.1 hash funkcija nėra pakankamai gera.
-Ji nepasižymi labai matomu lavinos efektu, ypač kai apdorojami inputai ilgi, jau nuo keliasdešimties simbolių matydavosi, kad hash'ai išeina labai panašūs.
-Tai reikia patobulinti v2.0 ir jau turiu idėjų kaip tai padaryti.
+v0.2 yra daug geresnė versija už v0.1
+Nerandu labai ryškių problemų
+Reiktų dar palyginti efektyvumą su keliais kitais algoritmais su ta pačia kompiuterine įranga, kad galutinai įvertinti efektyvumą

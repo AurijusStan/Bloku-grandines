@@ -131,9 +131,11 @@ string myhash(string s) {
     return finalHexHash;
 }
 
-string skaityti(double &i, double &b) {
+string skaityti(int i) {
     string input;
-    string failas = "random_skirias1";
+    cout << "Enter file name without '.txt': ";
+    string failas;
+    cin>>failas;
 
     ifstream file(failas + ".txt");
 
@@ -145,13 +147,14 @@ string skaityti(double &i, double &b) {
         }
     } 
     else {
-        int startLine = 1, numLines = 200000;
+        int startLine = i, numLines = 1;
         string temp;
         int currentLine = 1;
         while (currentLine < startLine && getline(file, temp)) {
             currentLine++;
         }
 
+        int k=0;
         while (numLines > 0 && getline(file, temp)) {
             input += temp + " ";
             numLines--;
@@ -161,26 +164,27 @@ string skaityti(double &i, double &b) {
             // input = "";
             // numLines--;
             //// skirtingumas
-            getline(file, temp);
-            string h1=myhash(input);
-            string h2=myhash(temp);
-            for(int j=0; j<64; j++){
-                if(h1[j] == h2[j]) i++;
-            }
-            string b1=stobinary(h1);
-            string b2=stobinary(h2);
-            for(int j=0; j<256; j++){
-                if(b1[j] == b2[j]) b++;
-            }
-
-            input = "";
-            numLines--;
+            // i.push_back(0);
+            // b.push_back(0);
+            // getline(file, temp);
+            // string h1=myhash(input);
+            // string h2=myhash(temp);
+            // for(int j=0; j<64; j++){
+            //     if(h1[j] == h2[j]) i[k]++;
+            // }
+            // string b1=stobinary(h1);
+            // string b2=stobinary(h2);
+            // for(int j=0; j<256; j++){
+            //     if(b1[j] == b2[j]) b[k]++;
+            // }
+            // input = "";
+            // numLines--;
+            // i[k]/=64;
+            // i[k]*=100;
+            // b[k]/=256;
+            // b[k]*=100;
+            // k++;
         }
-        //// skirtingumas
-        i/=(64*200000);
-        i*=100;
-        b/=(256*200000);
-        b*=100;
 
         file.close();
     }
@@ -212,21 +216,27 @@ int main() {
         getline(cin, input);
     } 
     else {
-        double i=0;
-        double b=0;
-        input = skaityti(i, b);
-        cout<<"Hex sutapimas: "<<i<<endl;
-        cout<<"Binary sutapimas: "<<b<<endl;
+
+        // vector<double> i;
+        // vector<double> b;
+        input = skaityti(1);
+        // double calc=100000;
+        // cout<<"Hex average sutapimas: "<<(accumulate(i.begin(), i.end(), 0.0))/calc<<endl;
+        // cout<<"Hex min sutapimas: "<<*min_element(i.begin(), i.end())<<endl;
+        // cout<<"Hex max sutapimas: "<<*max_element(i.begin(), i.end())<<endl;
+        // cout<<"Binary average sutapimas: "<<(accumulate(b.begin(), b.end(), 0.0))/calc<<endl;
+        // cout<<"Binary min sutapimas: "<<*min_element(b.begin(), b.end())<<endl;
+        // cout<<"Binary max sutapimas: "<<*max_element(b.begin(), b.end())<<endl;
     }
     
-    // auto start = chrono::high_resolution_clock::now();
+    auto start = chrono::high_resolution_clock::now();
 
-    // string final = myhash(input);
+    string final = myhash(input);
 
-    // auto end = chrono::high_resolution_clock::now();
-    // chrono::duration<double, milli> duration = end - start;
+    auto end = chrono::high_resolution_clock::now();
+    chrono::duration<double, milli> duration = end - start;
 
-    // cout << "Final hash: " << final << endl;
+    cout << "Final hash: " << final << endl;
     // cout << "Time taken to hash: " << duration.count() << " milliseconds" << endl;
 
     return 0;
