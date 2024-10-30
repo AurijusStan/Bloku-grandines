@@ -1,29 +1,39 @@
-#include "Block.h"
-#include "hash.h"
+#include "block.h"
+#include "sha256.h"
 
-Block::Block(int idx, const std::string& prevHash, const std::string& data) {
-    this->index = idx;
-    this->prevHash = prevHash;
-    this->data = data;
-    this->timestamp = time(nullptr);
-    this->nonce = 0;
-    this->hash = calculateHash();
+std::string sha256(const std::string& input) {
+    uint8_t hash[32];
+    SHA256_CTX ctx;
+    sha256_init(&ctx);
+    sha256_update(&ctx, reinterpret_cast<const uint8_t*>(input.c_str()), input.size());
+    sha256_final(&ctx, hash);
+
+    std::stringstream ss;
+    for (int i = 0; i < 32; ++i)
+        ss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
+    return ss.str();
+}
+
+Block::Block(int idx, const std::vector<std::string>& transactions, const std::string& prevHash)
+    : index(idx), transactions(transactions), prevHash(prevHash), timestamp(std::time(nullptr)), nonce(0), version(1), difficultyTarget(4) {
+    merkleRoot = calculateMerkleRoot();
+    hash = calculateHash();
+}
+
+std::string Block::calculateMerkleRoot() const {
+    std::string combined;
+    for (const auto& tx : transactions) {
+        combined += sha256(tx);
+    }
+    return sha256(combined);
 }
 
 std::string Block::calculateHash() const {
-    return myhash(std::to_string(index) + prevHash + std::to_string(timestamp) + data + std::to_string(nonce));
+    std::stringstream ss;
+    ss << index << prevHash << merkleRoot << timestamp << nonce << version << difficultyTarget;
+    return sha256(ss.str());
 }
 
-void Block::mineBlock(int difficulty) {
-    std::string str(difficulty, '0');
-    while (hash.substr(0, difficulty) != str) {
-        nonce++;
-        hash = calculateHash();
-
-        if (nonce % 10000 == 0) {
-            std::cout << "Nonce: " << nonce << " | Hash: " << hash << std::endl;
-        }
-    }
-    std::cout << "Block mined with nonce: " << nonce << " | Hash: " << hash << std::endl;
+int Block::getIndex() const {
+    return index;
 }
-

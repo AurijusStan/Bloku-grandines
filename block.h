@@ -1,25 +1,28 @@
 #ifndef BLOCK_H
 #define BLOCK_H
 
-#include <iostream>
-#include <ctime>
+#include <bits/stdc++.h>
 
 class Block {
 public:
-    std::string hash;
     std::string prevHash;
-    std::string data;
+    std::string hash;
+    std::string merkleRoot;
     time_t timestamp;
-    int index;
     int nonce;
+    int version;
+    int difficultyTarget;
+    std::vector<std::string> transactions;
 
-    Block(int idx, const std::string& prevHash, const std::string& data);
+    Block(int index, const std::vector<std::string>& transactions, const std::string& prevHash);
 
     std::string calculateHash() const;
-    void mineBlock(int difficulty);
-    
+    std::string calculateMerkleRoot() const;
+
+    int getIndex() const;
+
 private:
-    std::string getHashString() const;
+    int index;
 };
 
 #endif

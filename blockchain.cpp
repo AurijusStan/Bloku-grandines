@@ -1,32 +1,27 @@
 #include "blockchain.h"
 
 Blockchain::Blockchain() {
-    difficulty = 4;
-    chain.push_back(Block(0, "0", "Genesis Block"));
+    chain.emplace_back(Block(0, {"Genesis Block"}, "0"));
 }
 
-void Blockchain::addBlock(Block newBlock) {
-    newBlock.prevHash = getLatestBlock().hash;
-    newBlock.mineBlock(difficulty);
+void Blockchain::addBlock(const Block& newBlock) {
     chain.push_back(newBlock);
 }
 
-Block Blockchain::getLatestBlock() const {
+const Block& Blockchain::getLatestBlock() const {
     return chain.back();
 }
 
-bool Blockchain::isChainValid() const {
-    for (size_t i = 1; i < chain.size(); ++i) {
-        const Block& currentBlock = chain[i];
-        const Block& prevBlock = chain[i - 1];
-
-        if (currentBlock.hash != currentBlock.calculateHash()) {
-            return false;
-        }
-        
-        if (currentBlock.prevHash != prevBlock.hash) {
-            return false;
-        }
+bool Blockchain::isBlockValid(const Block& currentBlock, const Block& previousBlock) const {
+    if (currentBlock.prevHash != previousBlock.hash) {
+        return false;
+    }
+    if (currentBlock.hash != currentBlock.calculateHash()) {
+        return false;
     }
     return true;
+}
+
+const std::vector<Block>& Blockchain::getChain() const {
+    return chain;
 }

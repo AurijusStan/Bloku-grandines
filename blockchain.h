@@ -1,21 +1,20 @@
 #ifndef BLOCKCHAIN_H
 #define BLOCKCHAIN_H
 
-#include <vector>
+#include <bits/stdc++.h>
 #include "block.h"
 
 class Blockchain {
 public:
     Blockchain();
+    void addBlock(const Block& newBlock);
+    const Block& getLatestBlock() const;
 
-    void addBlock(Block newBlock);
-    bool isChainValid() const;
-    
+    const std::vector<Block>& getChain() const;
+
 private:
-    int difficulty;
     std::vector<Block> chain;
-
-    Block getLatestBlock() const;
+    bool isBlockValid(const Block& currentBlock, const Block& previousBlock) const;
 };
 
 #endif
