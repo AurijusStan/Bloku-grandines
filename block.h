@@ -2,6 +2,7 @@
 #define BLOCK_H
 
 #include <bits/stdc++.h>
+#include "transaction.h"
 
 class Block {
 public:
@@ -12,9 +13,9 @@ public:
     int nonce;
     int version;
     int difficultyTarget;
-    std::vector<std::string> transactions;
+    std::vector<Transaction> transactions;
 
-    Block(int index, const std::vector<std::string>& transactions, const std::string& prevHash);
+    Block(int idx, const std::vector<Transaction>& transactions, const std::string& prevHash);
 
     std::string calculateHash() const;
     std::string calculateMerkleRoot() const;
