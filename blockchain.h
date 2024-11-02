@@ -1,7 +1,7 @@
 #ifndef BLOCKCHAIN_H
 #define BLOCKCHAIN_H
 
-#include <bits/stdc++.h>
+#include <vector>
 #include "block.h"
 
 class Blockchain {

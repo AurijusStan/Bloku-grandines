@@ -81,20 +81,19 @@ std::vector<Transaction> generateTransactions(const std::vector<User>& users, in
     std::uniform_int_distribution<> userDis(0, users.size() - 1);
 
     for (int i = 0; i < transactionCount; ++i) {
-        Transaction tx;
-        tx.id = generateTransactionID();
-
         int senderIndex = userDis(gen);
         int receiverIndex;
+
         do {
             receiverIndex = userDis(gen);
         } while (receiverIndex == senderIndex);
 
-        tx.sender = users[senderIndex].publicKey;
-        tx.receiver = users[receiverIndex].publicKey;
-        tx.amount = generateTransactionAmount();
+        std::string transactionID = generateTransactionID();
+
+        Transaction tx(transactionID, users[senderIndex].publicKey, users[receiverIndex].publicKey, generateTransactionAmount());
 
         transactions.push_back(tx);
     }
     return transactions;
 }
+
