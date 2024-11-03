@@ -1,6 +1,7 @@
 #include "block.h"
 #include "sha256.h"
 #include "generator.h"
+#include <sstream>
 
 std::string sha256(const std::string& input) {
     uint8_t hash[32];
@@ -17,6 +18,7 @@ std::string sha256(const std::string& input) {
 
 Block::Block(int idx, const std::vector<Transaction>& txs, const std::string& prevHash) 
     : index(idx), transactions(txs), prevHash(prevHash), nonce(0), timestamp(time(nullptr)) {
+    merkleRoot = calculateMerkleRoot();
     hash = calculateHash();
 }
 

@@ -35,31 +35,25 @@ void mineBlock(Blockchain& blockchain, std::vector<User>& users, std::vector<Tra
     blockchain.addBlock(newBlock);
 }
 
+#include "generator.h"
+#include "blockchain.h"
+#include <iostream>
+
 int main() {
+    std::cout << "Starting user generation...\n";
+    int userCount = 10;
+    std::vector<User> users = generateUsers(userCount);
+    std::cout << "User generation completed.\n";
+
+    std::cout << "Starting transaction generation...\n";
+    int transactionCount = 20;
+    std::vector<Transaction> transactions = generateTransactions(users, transactionCount);
+    std::cout << "Transaction generation completed.\n";
+
     Blockchain blockchain;
-    std::vector<User> users = generateUsers(1000);
-    std::vector<Transaction> transactions = generateTransactions(users, 10000);
+    Block newBlock(blockchain.getChain().size(), transactions, blockchain.getLatestBlock().hash);
+    blockchain.addBlock(newBlock);
 
-    int difficulty = 4;
-
-    std::cout << "Mining Block 1..." << std::endl;
-    mineBlock(blockchain, users, transactions, difficulty);
-
-    std::cout << "Mining Block 2..." << std::endl;
-    mineBlock(blockchain, users, transactions, difficulty);
-
-    for (const auto& block : blockchain.getChain()) {
-        std::cout << "Block Index: " << block.getIndex() << std::endl;
-        std::cout << "Previous Hash: " << block.prevHash << std::endl;
-        std::cout << "Hash: " << block.hash << std::endl;
-        std::cout << "Nonce: " << block.nonce << std::endl;
-        std::cout << "---------------------------" << std::endl;
-    }
-
-    std::cout << "\nUser balances after mining:" << std::endl;
-    for (const auto& user : users) {
-        std::cout << "User: " << user.name << ", Balance: " << user.balance << std::endl;
-    }
-
+    std::cout << "Blockchain setup completed.\n";
     return 0;
 }
