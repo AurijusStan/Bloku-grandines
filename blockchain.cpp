@@ -2,7 +2,7 @@
 #include "transaction.h"
 
 Blockchain::Blockchain() {
-    Transaction genesisTransaction("0", "Genesis", "Genesis", 0);
+    Transaction genesisTransaction("0", "Genesis", 0);
     std::vector<Transaction> genesisTransactions = { genesisTransaction };
     chain.emplace_back(Block(0, genesisTransactions, "0"));
 }

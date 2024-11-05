@@ -29,8 +29,19 @@ void mineBlock(Blockchain& blockchain, std::vector<User>& users, std::vector<Tra
     const std::string prevHash = blockchain.getLatestBlock().hash;
 
     std::vector<Transaction> blockTransactions;
-    for (int i = 0; i < std::min(100, static_cast<int>(transactions.size())); ++i) {
-        blockTransactions.push_back(transactions[i]);
+    auto txIt = transactions.begin();
+    while (blockTransactions.size() < 100 && txIt != transactions.end()) {
+        if (processTransaction(*txIt, users)) {
+            blockTransactions.push_back(*txIt);
+            txIt = transactions.erase(txIt);
+        } else {
+            ++txIt;
+        }
+    }
+
+    if (blockTransactions.empty()) {
+        std::cout << "No valid transactions to mine.\n";
+        return;
     }
 
     Block newBlock(blockchain.getChain().size(), blockTransactions, prevHash);
@@ -42,20 +53,51 @@ void mineBlock(Blockchain& blockchain, std::vector<User>& users, std::vector<Tra
     }
     std::cout << "Block mined: " << newBlock.hash << std::endl;
 
-    for (auto& tx : newBlock.transactions) {
-        if (processTransaction(tx, users)) {
-            transactions.erase(transactions.begin());
-        }
+    blockchain.addBlock(newBlock);
+    std::cout << "Block added to blockchain.\n";
+}
+
+void displayBlockInfo(const Blockchain& blockchain, int blockIndex) {
+    if (blockIndex < 0 || blockIndex >= blockchain.getChain().size()) {
+        std::cout << "Invalid block index.\n";
+        return;
     }
 
-    blockchain.addBlock(newBlock);
+    const Block& block = blockchain.getChain()[blockIndex];
+    std::cout << "\nBlock Index: " << block.getIndex() << "\n";
+    std::cout << "Hash: " << block.hash << "\n";
+    std::cout << "Previous Hash: " << block.prevHash << "\n";
+    std::cout << "Merkle Root: " << block.merkleRoot << "\n";
+    std::cout << "Timestamp: " << block.timestamp << "\n";
+    std::cout << "Nonce: " << block.nonce << "\n";
+    std::cout << "Transactions:\n";
+    for (const auto& tx : block.transactions) {
+        std::cout << "  ID: " << tx.id << ", Amount: " << tx.amount << ", From: " << tx.sender << ", To: " << tx.receiver << "\n";
+    }
+    std::cout << "---------------------------\n";
+}
+
+void displayTransactionInfo(const Blockchain& blockchain, const std::string& transactionID) {
+    for (const auto& block : blockchain.getChain()) {
+        for (const auto& tx : block.transactions) {
+            if (tx.id == transactionID) {
+                std::cout << "\nTransaction ID: " << tx.id << "\n";
+                std::cout << "Amount: " << tx.amount << "\n";
+                std::cout << "Sender: " << tx.sender << "\n";
+                std::cout << "Receiver: " << tx.receiver << "\n";
+                std::cout << "Included in Block Index: " << block.getIndex() << "\n";
+                return;
+            }
+        }
+    }
+    std::cout << "Transaction ID " << transactionID << " not found in any block.\n";
 }
 
 void displayMenu() {
     Blockchain blockchain;
     std::vector<User> users;
     std::vector<Transaction> transactions;
-    int difficulty = 4;
+    int difficulty = 5;
 
     while (true) {
         std::cout << "\nMenu:\n";
@@ -64,18 +106,13 @@ void displayMenu() {
         std::cout << "3. Add 100 Random Transactions to New Block\n";
         std::cout << "4. Mine Block\n";
         std::cout << "5. Display Blockchain and User Balances\n";
-        std::cout << "6. Exit\n";
+        std::cout << "6. View Block Information\n";
+        std::cout << "7. View Transaction Information\n";
+        std::cout << "8. Exit\n";
         std::cout << "Choose an option: ";
 
         int choice;
         std::cin >> choice;
-
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Invalid input. Please enter a number between 1 and 6.\n";
-            continue;
-        }
 
         if (choice == 1) {
             int userCount;
@@ -126,6 +163,18 @@ void displayMenu() {
             }
 
         } else if (choice == 6) {
+            int blockIndex;
+            std::cout << "Enter the block index to view: ";
+            std::cin >> blockIndex;
+            displayBlockInfo(blockchain, blockIndex);
+
+        } else if (choice == 7) {
+            std::string transactionID;
+            std::cout << "Enter the transaction ID to view: ";
+            std::cin >> transactionID;
+            displayTransactionInfo(blockchain, transactionID);
+
+        } else if (choice == 8) {
             std::cout << "Exiting program.\n";
             break;
 
