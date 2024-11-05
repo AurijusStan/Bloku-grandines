@@ -28,6 +28,9 @@ bool processTransaction(Transaction& tx, std::vector<User>& users) {
 void mineBlock(Blockchain& blockchain, std::vector<User>& users, std::vector<Transaction>& transactions, int difficulty) {
     const std::string prevHash = blockchain.getLatestBlock().hash;
 
+    std::mt19937 gen(std::chrono::system_clock::now().time_since_epoch().count());
+    std::shuffle(transactions.begin(), transactions.end(), gen);
+
     std::vector<Transaction> blockTransactions;
     auto txIt = transactions.begin();
     while (blockTransactions.size() < 100 && txIt != transactions.end()) {
@@ -113,6 +116,13 @@ void displayMenu() {
 
         int choice;
         std::cin >> choice;
+
+        if (std::cin.fail() || choice < 1 || choice > 8) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid choice. Please enter a number between 1 and 8.\n";
+            continue;
+        }
 
         if (choice == 1) {
             int userCount;

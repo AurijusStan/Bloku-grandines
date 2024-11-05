@@ -4,7 +4,7 @@
 
 std::string generateRandomHex(int length) {
     static const char hex_chars[] = "0123456789ABCDEF";
-    static std::mt19937 gen(std::random_device{}());
+    static std::mt19937 gen(std::chrono::system_clock::now().time_since_epoch().count());
     std::uniform_int_distribution<> dis(0, 15);
 
     std::ostringstream oss;
@@ -24,7 +24,7 @@ std::string generateName() {
         "Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor"
     };
 
-    static std::mt19937 gen(std::random_device{}());
+    static std::mt19937 gen(std::chrono::system_clock::now().time_since_epoch().count());
     std::uniform_int_distribution<> firstDis(0, firstNames.size() - 1);
     std::uniform_int_distribution<> lastDis(0, lastNames.size() - 1);
 
@@ -33,7 +33,7 @@ std::string generateName() {
 }
 
 int generateBalance() {
-    static std::mt19937 gen(std::random_device{}());
+    static std::mt19937 gen(std::chrono::system_clock::now().time_since_epoch().count());
     std::uniform_int_distribution<> balanceDis(100, 1000000);
 
     int balance = balanceDis(gen);
@@ -45,8 +45,7 @@ std::vector<User> generateUsers(int count) {
     users.reserve(count);
     std::unordered_set<std::string> usedKeys;
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
+    std::mt19937 gen(std::chrono::system_clock::now().time_since_epoch().count());
 
     for (int i = 0; i < count; ++i) {
         User user;
@@ -69,21 +68,8 @@ std::vector<User> generateUsers(int count) {
     return users;
 }
 
-// std::string generateTransactionID(int length = 16) {
-//     static const char hex_chars[] = "0123456789ABCDEF";
-//     std::random_device rd;
-//     std::mt19937 gen(rd());
-//     std::uniform_int_distribution<> dis(0, 15);
-
-//     std::ostringstream oss;
-//     for (int i = 0; i < length; ++i) {
-//         oss << hex_chars[dis(gen)];
-//     }
-//     return oss.str();
-// }
-
 int generateTransactionAmount() {
-    static std::mt19937 gen(std::random_device{}());
+    static std::mt19937 gen(std::chrono::system_clock::now().time_since_epoch().count());
     std::uniform_int_distribution<> amountDis(1, 100000);
 
     int amount = amountDis(gen);
@@ -94,7 +80,7 @@ std::vector<Transaction> generateTransactions(const std::vector<User>& users, in
     std::vector<Transaction> transactions;
     transactions.reserve(transactionCount);
 
-    static std::mt19937 gen(std::random_device{}());
+    static std::mt19937 gen(std::chrono::system_clock::now().time_since_epoch().count());
     std::uniform_int_distribution<> userDis(0, users.size() - 1);
 
     for (int i = 0; i < transactionCount; ++i) {
