@@ -27,6 +27,10 @@ Transaction& Transaction::operator=(const Transaction& other) {
     return *this;
 }
 
+bool Transaction::isValid() const {
+    return id == generateTransactionID();
+}
+
 std::string Transaction::generateTransactionID() const {
     std::string data = sender + receiver + std::to_string(amount);
 

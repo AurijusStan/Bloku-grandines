@@ -19,6 +19,8 @@ public:
 
     Transaction& operator=(const Transaction& other);
 
+    bool isValid() const;
+
 private: 
     std::string generateTransactionID() const;
 };

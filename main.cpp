@@ -31,7 +31,7 @@ void mineBlock(Blockchain& blockchain, std::vector<User>& users, std::vector<Tra
     std::vector<Transaction> blockTransactions;
     auto txIt = transactions.begin();
     while (blockTransactions.size() < 100 && txIt != transactions.end()) {
-        if (processTransaction(*txIt, users)) {
+        if (processTransaction(*txIt, users) && txIt->isValid()) {
             blockTransactions.push_back(*txIt);
             txIt = transactions.erase(txIt);
         } else {
