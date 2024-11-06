@@ -21,6 +21,10 @@ public:
 
     bool isValid() const;
 
+    bool operator==(const Transaction& other) const {
+        return id == other.id && sender == other.sender && receiver == other.receiver && amount == other.amount;
+    }
+
 private: 
     std::string generateTransactionID() const;
 };
