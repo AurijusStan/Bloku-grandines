@@ -191,19 +191,18 @@ void displayMenu() {
         std::cout << "\nMenu:\n";
         std::cout << "1. Generate Users\n";
         std::cout << "2. Generate Transactions\n";
-        std::cout << "3. Add 100 Random Transactions to New Block\n";
-        std::cout << "4. Mine Block\n";
-        std::cout << "5. Display Blockchain and User Balances\n";
-        std::cout << "6. View Block Information\n";
-        std::cout << "7. View Transaction Information\n";
-        std::cout << "8. Attempt Mining with Multiple Candidates\n";
-        std::cout << "9. Exit\n";
+        std::cout << "3. Mine Block\n";
+        std::cout << "4. Display Blockchain and User Balances\n";
+        std::cout << "5. View Block Information\n";
+        std::cout << "6. View Transaction Information\n";
+        std::cout << "7. Attempt Mining with Multiple Candidates\n";
+        std::cout << "8. Exit\n";
         std::cout << "Choose an option: ";
 
         int choice;
         std::cin >> choice;
 
-        if (std::cin.fail() || choice < 1 || choice > 9) {
+        if (std::cin.fail() || choice < 1 || choice > 8) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Invalid choice. Please enter a number between 1 and 8.\n";
@@ -229,22 +228,13 @@ void displayMenu() {
             std::cout << "Generated " << transactionCount << " transactions.\n";
 
         } else if (choice == 3) {
-            std::vector<Transaction> selectedTransactions = selectRandomTransactions(transactions, 100);
-            const std::string prevHash = blockchain.getLatestBlock().hash;
-            if (selectedTransactions.empty()) {
-                std::cout << "No transactions available to create a new block.\n";
-            } else {
-                Block newBlock(blockchain.getChain().size(), selectedTransactions, prevHash);
-                std::cout << "New block with 100 random transactions prepared but not mined.\n";
-            }
-        } else if (choice == 4) {
             if (transactions.empty()) {
                 std::cout << "No transactions to mine. Please generate transactions first.\n";
             } else {
                 mineBlock(blockchain, users, transactions, difficulty);
             }
 
-        } else if (choice == 5) {
+        } else if (choice == 4) {
             std::cout << "\nBlockchain:\n";
             for (const auto& block : blockchain.getChain()) {
                 std::cout << "Block Index: " << block.getIndex() << ", Hash: " << block.hash << ", PrevHash: " << block.prevHash << "\n";
@@ -255,22 +245,22 @@ void displayMenu() {
                 std::cout << "User: " << user.name << ", Balance: " << user.balance << "\n";
             }
 
-        } else if (choice == 6) {
+        } else if (choice == 5) {
             int blockIndex;
             std::cout << "Enter the block index to view: ";
             std::cin >> blockIndex;
             displayBlockInfo(blockchain, blockIndex);
 
-        } else if (choice == 7) {
+        } else if (choice == 6) {
             std::string transactionID;
             std::cout << "Enter the transaction ID to view: ";
             std::cin >> transactionID;
             displayTransactionInfo(blockchain, transactionID);
 
-        } else if (choice == 8) {
+        } else if (choice == 7) {
             attemptMiningCandidates(blockchain, users, transactions, difficulty);
 
-        } else if (choice == 9) {
+        } else if (choice == 8) {
             std::cout << "Exiting program.\n";
             break;
 
