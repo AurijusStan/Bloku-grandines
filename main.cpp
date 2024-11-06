@@ -72,17 +72,28 @@ void mineBlock(Blockchain& blockchain, std::vector<User>& users, std::vector<Tra
     }
     std::cout << "Block mined: " << newBlock.hash << std::endl;
 
+    std::vector<Transaction> validTransactions;
     for (const auto& tx : newBlock.transactions) {
         if (processTransaction(tx, users)) {
+            validTransactions.push_back(tx);
             auto txToErase = std::find(transactions.begin(), transactions.end(), tx);
             if (txToErase != transactions.end()) {
                 transactions.erase(txToErase);
             }
+        } else {
+            std::cout << "Transaction invalid after mining due to insufficient funds: " << tx.id << ". Skipping.\n";
         }
     }
 
+    if (validTransactions.empty()) {
+        std::cout << "All transactions were invalid. No block added to the blockchain.\n";
+        return; 
+    }
+
+    newBlock.transactions = validTransactions;
+
     blockchain.addBlock(newBlock);
-    std::cout << "Block added to blockchain.\n";
+    std::cout << "Block added to blockchain with " << validTransactions.size() << " transactions.\n";
 }
 
 void attemptMiningCandidates(Blockchain& blockchain, std::vector<User>& users, std::vector<Transaction>& transactions, int difficulty) {
