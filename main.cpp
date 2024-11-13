@@ -101,6 +101,11 @@ void attemptMiningCandidates(Blockchain& blockchain, std::vector<User>& users, s
     int timeLimitMs = 1000;
     int maxIterations = 10000; 
 
+    if (transactions.empty()) {
+        std::cout << "No valid transactions to mine.\n";
+        return;
+    }
+
     while (true) {
         std::vector<Block> candidates;
 
@@ -253,7 +258,7 @@ void displayMenu() {
 
             std::cout << "\nUser Balances:\n";
             for (const auto& user : users) {
-                std::cout << "User: " << user.name << ", Balance: " << user.balance << "\n";
+                std::cout << "User: " << user.name << ", Public key: " << user.publicKey << ", Balance: " << user.balance << "\n";
             }
 
         } else if (choice == 5) {
