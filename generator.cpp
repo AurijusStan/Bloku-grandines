@@ -95,7 +95,7 @@ std::vector<Transaction> generateTransactions(const std::vector<User>& users, in
         Transaction tx(users[senderIndex].publicKey, users[receiverIndex].publicKey, amount);
         transactions.push_back(tx);
 
-        std::cout << "Generated transaction " << i + 1 << ": " << tx.id << " from " << tx.sender << " to " << tx.receiver << ", Amount: " << tx.amount << "\n";
+        std::cout << "Generated transaction " << i + 1 << ": " << tx.getId() << " from " << tx.getSender() << " to " << tx.getReceiver() << ", Amount: " << tx.getAmount() << "\n";
     }
 
     std::cout << "Finished generating transactions.\n";

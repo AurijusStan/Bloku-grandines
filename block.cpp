@@ -24,7 +24,7 @@ Block::Block(int idx, const std::vector<Transaction>& txs, const std::string& pr
 std::string Block::calculateMerkleRoot() const {
     std::string combined;
     for (const auto& tx : transactions) {
-        combined += sha256(tx.sender + "->" + tx.receiver + ": " + std::to_string(tx.amount));
+        combined += sha256(tx.getSender() + "->" + tx.getReceiver() + ": " + std::to_string(tx.getAmount()));
     }
     return sha256(combined);
 }

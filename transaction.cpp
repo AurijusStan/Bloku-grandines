@@ -27,6 +27,37 @@ Transaction& Transaction::operator=(const Transaction& other) {
     return *this;
 }
 
+std::string Transaction::getId() const {
+    return id;
+}
+
+std::string Transaction::getSender() const {
+    return sender;
+}
+
+std::string Transaction::getReceiver() const {
+    return receiver;
+}
+
+int Transaction::getAmount() const {
+    return amount;
+}
+
+void Transaction::setSender(const std::string& newSender) {
+    sender = newSender;
+    id = generateTransactionID();
+}
+
+void Transaction::setReceiver(const std::string& newReceiver) {
+    receiver = newReceiver;
+    id = generateTransactionID();
+}
+
+void Transaction::setAmount(int newAmount) {
+    amount = newAmount;
+    id = generateTransactionID();
+}
+
 bool Transaction::isValid() const {
     return id == generateTransactionID();
 }

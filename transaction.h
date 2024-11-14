@@ -6,10 +6,7 @@
 
 class Transaction {
 public:
-    std::string id;
-    std::string sender;
-    std::string receiver;
-    int amount;
+    
 
     Transaction() = default;
 
@@ -19,6 +16,15 @@ public:
 
     Transaction& operator=(const Transaction& other);
 
+    std::string getId() const;
+    std::string getSender() const;
+    std::string getReceiver() const;
+    int getAmount() const;
+
+    void setSender(const std::string& sender);
+    void setReceiver(const std::string& receiver);
+    void setAmount(int amount);
+
     bool isValid() const;
 
     bool operator==(const Transaction& other) const {
@@ -26,6 +32,11 @@ public:
     }
 
 private: 
+    std::string id;
+    std::string sender;
+    std::string receiver;
+    int amount;
+
     std::string generateTransactionID() const;
 };
 

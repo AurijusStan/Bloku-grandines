@@ -21,23 +21,23 @@ std::vector<Transaction> selectRandomTransactions(const std::vector<Transaction>
 }
 
 bool processTransaction(const Transaction& tx, std::vector<User>& users) {
-    auto senderIt = std::find_if(users.begin(), users.end(), [&tx](const User& user) { return user.publicKey == tx.sender; });
-    auto receiverIt = std::find_if(users.begin(), users.end(), [&tx](const User& user) { return user.publicKey == tx.receiver; });
+    auto senderIt = std::find_if(users.begin(), users.end(), [&tx](const User& user) { return user.publicKey == tx.getSender(); });
+    auto receiverIt = std::find_if(users.begin(), users.end(), [&tx](const User& user) { return user.publicKey == tx.getReceiver(); });
 
     if (senderIt == users.end() || receiverIt == users.end()) {
         std::cout << "Transaction invalid: Sender or receiver not found.\n";
         return false;
     }
 
-    if (senderIt->balance < tx.amount) {
+    if (senderIt->balance < tx.getAmount()) {
         std::cout << "Transaction invalid: Insufficient funds.\n";
         return false;
     }
 
-    senderIt->balance -= tx.amount;
-    receiverIt->balance += tx.amount;
+    senderIt->balance -= tx.getAmount();
+    receiverIt->balance += tx.getAmount();
 
-    std::cout << "Processed transaction " << tx.id << ": " << tx.amount << " from " << senderIt->name << " to " << receiverIt->name << "\n";
+    std::cout << "Processed transaction " << tx.getId() << ": " << tx.getAmount() << " from " << senderIt->name << " to " << receiverIt->name << "\n";
     return true;
 }
 
@@ -170,7 +170,7 @@ void displayBlockInfo(const Blockchain& blockchain, int blockIndex) {
     std::cout << "Nonce: " << block.getNonce() << "\n";
     std::cout << "Transactions:\n";
     for (const auto& tx : block.getTransactions()) {
-        std::cout << "  ID: " << tx.id << ", Amount: " << tx.amount << ", From: " << tx.sender << ", To: " << tx.receiver << "\n";
+        std::cout << "  ID: " << tx.getId() << ", Amount: " << tx.getAmount() << ", From: " << tx.getSender() << ", To: " << tx.getReceiver() << "\n";
     }
     std::cout << "---------------------------\n";
 }
@@ -178,11 +178,11 @@ void displayBlockInfo(const Blockchain& blockchain, int blockIndex) {
 void displayTransactionInfo(const Blockchain& blockchain, const std::string& transactionID) {
     for (const auto& block : blockchain.getChain()) {
         for (const auto& tx : block.getTransactions()) {
-            if (tx.id == transactionID) {
-                std::cout << "\nTransaction ID: " << tx.id << "\n";
-                std::cout << "Amount: " << tx.amount << "\n";
-                std::cout << "Sender: " << tx.sender << "\n";
-                std::cout << "Receiver: " << tx.receiver << "\n";
+            if (tx.getId() == transactionID) {
+                std::cout << "\nTransaction ID: " << tx.getId() << "\n";
+                std::cout << "Amount: " << tx.getAmount() << "\n";
+                std::cout << "Sender: " << tx.getSender() << "\n";
+                std::cout << "Receiver: " << tx.getReceiver() << "\n";
                 std::cout << "Included in Block Index: " << block.getIndex() << "\n";
                 return;
             }
