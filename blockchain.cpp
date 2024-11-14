@@ -2,9 +2,11 @@
 #include "transaction.h"
 
 Blockchain::Blockchain() {
-    Transaction genesisTransaction("0", "Genesis", 0);
+    Transaction genesisTransaction("Genesis", "Genesis", 0);
     std::vector<Transaction> genesisTransactions = { genesisTransaction };
-    chain.emplace_back(Block(0, genesisTransactions, "0"));
+    
+    Block genesisBlock(0, genesisTransactions, "0");
+    chain.push_back(genesisBlock);
 }
 
 void Blockchain::addBlock(const Block& newBlock) {
@@ -16,10 +18,10 @@ const Block& Blockchain::getLatestBlock() const {
 }
 
 bool Blockchain::isBlockValid(const Block& currentBlock, const Block& previousBlock) const {
-    if (currentBlock.prevHash != previousBlock.hash) {
+    if (currentBlock.getPreviousHash() != previousBlock.getHash()) {
         return false;
     }
-    if (currentBlock.hash != currentBlock.calculateHash()) {
+    if (currentBlock.getHash() != currentBlock.calculateHash()) {
         return false;
     }
     return true;

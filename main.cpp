@@ -5,9 +5,8 @@
 
 std::vector<Transaction> selectRandomTransactions(const std::vector<Transaction>& transactions, int maxCount = 100) {
     int count = std::min(maxCount, static_cast<int>(transactions.size()));
-    
     std::vector<Transaction> selectedTransactions;
-    
+
     if (count == 0) {
         std::cout << "No transactions available for selection.\n";
         return selectedTransactions;
@@ -18,7 +17,6 @@ std::vector<Transaction> selectRandomTransactions(const std::vector<Transaction>
     std::shuffle(selectedTransactions.begin(), selectedTransactions.end(), gen);
 
     selectedTransactions.resize(count);
-
     return selectedTransactions;
 }
 
@@ -44,7 +42,7 @@ bool processTransaction(const Transaction& tx, std::vector<User>& users) {
 }
 
 void mineBlock(Blockchain& blockchain, std::vector<User>& users, std::vector<Transaction>& transactions, int difficulty) {
-    const std::string prevHash = blockchain.getLatestBlock().hash;
+    const std::string prevHash = blockchain.getLatestBlock().getHash();
 
     std::mt19937 gen(std::chrono::system_clock::now().time_since_epoch().count());
     std::shuffle(transactions.begin(), transactions.end(), gen);
@@ -66,40 +64,37 @@ void mineBlock(Blockchain& blockchain, std::vector<User>& users, std::vector<Tra
     Block newBlock(blockchain.getChain().size(), blockTransactions, prevHash);
 
     std::string target(difficulty, '0');
-    while (newBlock.hash.substr(0, difficulty) != target) {
-        newBlock.nonce++;
-        newBlock.hash = newBlock.calculateHash();
+    while (newBlock.getHash().substr(0, difficulty) != target) {
+        newBlock.setNonce(newBlock.getNonce() + 1);
+        newBlock.setHash(newBlock.calculateHash());
     }
-    std::cout << "Block mined: " << newBlock.hash << std::endl;
+    std::cout << "Block mined: " << newBlock.getHash() << std::endl;
 
     std::vector<Transaction> validTransactions;
-    for (const auto& tx : newBlock.transactions) {
+    for (const auto& tx : newBlock.getTransactions()) {
         if (processTransaction(tx, users)) {
             validTransactions.push_back(tx);
             auto txToErase = std::find(transactions.begin(), transactions.end(), tx);
             if (txToErase != transactions.end()) {
                 transactions.erase(txToErase);
             }
-        } else {
-            std::cout << "Transaction invalid after mining due to insufficient funds: " << tx.id << ". Skipping.\n";
         }
     }
 
     if (validTransactions.empty()) {
         std::cout << "All transactions were invalid. No block added to the blockchain.\n";
-        return; 
+        return;
     }
 
-    newBlock.transactions = validTransactions;
-
+    newBlock.setMerkleRoot(newBlock.calculateMerkleRoot());
     blockchain.addBlock(newBlock);
     std::cout << "Block added to blockchain with " << validTransactions.size() << " transactions.\n";
 }
 
 void attemptMiningCandidates(Blockchain& blockchain, std::vector<User>& users, std::vector<Transaction>& transactions, int difficulty) {
     const int numCandidates = 5;
-    int timeLimitMs = 1000;
-    int maxIterations = 10000; 
+    int timeLimitMs = 3000;
+    int maxIterations = 100000;
 
     if (transactions.empty()) {
         std::cout << "No valid transactions to mine.\n";
@@ -113,7 +108,7 @@ void attemptMiningCandidates(Blockchain& blockchain, std::vector<User>& users, s
             std::vector<Transaction> blockTransactions = selectRandomTransactions(transactions, 100);
 
             if (!blockTransactions.empty()) {
-                Block candidateBlock(blockchain.getChain().size(), blockTransactions, blockchain.getLatestBlock().hash);
+                Block candidateBlock(blockchain.getChain().size(), blockTransactions, blockchain.getLatestBlock().getHash());
                 candidates.push_back(candidateBlock);
             }
         }
@@ -125,18 +120,18 @@ void attemptMiningCandidates(Blockchain& blockchain, std::vector<User>& users, s
             int iterations = 0;
             std::string target(difficulty, '0');
 
-            while (candidate.hash.substr(0, difficulty) != target &&
+            while (candidate.getHash().substr(0, difficulty) != target &&
                    std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() < timeLimitMs &&
                    iterations < maxIterations) {
-                candidate.nonce++;
-                candidate.hash = candidate.calculateHash();
+                candidate.setNonce(candidate.getNonce() + 1);
+                candidate.setHash(candidate.calculateHash());
                 iterations++;
             }
 
-            if (candidate.hash.substr(0, difficulty) == target) {
-                std::cout << "Successfully mined block with hash: " << candidate.hash << "\n";
+            if (candidate.getHash().substr(0, difficulty) == target) {
+                std::cout << "Successfully mined block with hash: " << candidate.getHash() << "\n";
                 
-                for (auto& tx : candidate.transactions) {
+                for (auto& tx : candidate.getTransactions()) {
                     if (processTransaction(tx, users)) {
                         auto txIt = std::find(transactions.begin(), transactions.end(), tx);
                         if (txIt != transactions.end()) transactions.erase(txIt);
@@ -160,7 +155,6 @@ void attemptMiningCandidates(Blockchain& blockchain, std::vector<User>& users, s
     }
 }
 
-
 void displayBlockInfo(const Blockchain& blockchain, int blockIndex) {
     if (blockIndex < 0 || blockIndex >= blockchain.getChain().size()) {
         std::cout << "Invalid block index.\n";
@@ -169,13 +163,13 @@ void displayBlockInfo(const Blockchain& blockchain, int blockIndex) {
 
     const Block& block = blockchain.getChain()[blockIndex];
     std::cout << "\nBlock Index: " << block.getIndex() << "\n";
-    std::cout << "Hash: " << block.hash << "\n";
-    std::cout << "Previous Hash: " << block.prevHash << "\n";
-    std::cout << "Merkle Root: " << block.merkleRoot << "\n";
-    std::cout << "Timestamp: " << block.timestamp << "\n";
-    std::cout << "Nonce: " << block.nonce << "\n";
+    std::cout << "Hash: " << block.getHash() << "\n";
+    std::cout << "Previous Hash: " << block.getPreviousHash() << "\n";
+    std::cout << "Merkle Root: " << block.getMerkleRoot() << "\n";
+    std::cout << "Timestamp: " << block.getTimestamp() << "\n";
+    std::cout << "Nonce: " << block.getNonce() << "\n";
     std::cout << "Transactions:\n";
-    for (const auto& tx : block.transactions) {
+    for (const auto& tx : block.getTransactions()) {
         std::cout << "  ID: " << tx.id << ", Amount: " << tx.amount << ", From: " << tx.sender << ", To: " << tx.receiver << "\n";
     }
     std::cout << "---------------------------\n";
@@ -183,7 +177,7 @@ void displayBlockInfo(const Blockchain& blockchain, int blockIndex) {
 
 void displayTransactionInfo(const Blockchain& blockchain, const std::string& transactionID) {
     for (const auto& block : blockchain.getChain()) {
-        for (const auto& tx : block.transactions) {
+        for (const auto& tx : block.getTransactions()) {
             if (tx.id == transactionID) {
                 std::cout << "\nTransaction ID: " << tx.id << "\n";
                 std::cout << "Amount: " << tx.amount << "\n";
@@ -253,7 +247,7 @@ void displayMenu() {
         } else if (choice == 4) {
             std::cout << "\nBlockchain:\n";
             for (const auto& block : blockchain.getChain()) {
-                std::cout << "Block Index: " << block.getIndex() << ", Hash: " << block.hash << ", PrevHash: " << block.prevHash << "\n";
+                std::cout << "Block Index: " << block.getIndex() << ", Hash: " << block.getHash() << ", PrevHash: " << block.getPreviousHash() << "\n";
             }
 
             std::cout << "\nUser Balances:\n";
@@ -279,9 +273,6 @@ void displayMenu() {
         } else if (choice == 8) {
             std::cout << "Exiting program.\n";
             break;
-
-        } else {
-            std::cout << "Invalid choice. Please try again.\n";
         }
     }
 }

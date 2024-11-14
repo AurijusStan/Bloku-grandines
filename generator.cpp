@@ -1,6 +1,5 @@
 #include "generator.h"
 #include "transaction.h"
-#include <bits/stdc++.h>
 
 std::string generateRandomHex(int length) {
     static const char hex_chars[] = "0123456789ABCDEF";
