@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goods Marketplace</title>
+</head>
+<body>
+    <h1>Goods Marketplace</h1>
+    <div id="walletAddress">Connecting to MetaMask...</div>
+    <h1>Goods Marketplace</h1>
+
+    <div>
+        <h2>Purchase Goods</h2>
+        <button onclick="purchaseGoods()">Purchase</button>
+    </div>
+
+    <div>
+        <h2>Assign Courier</h2>
+        <input type="text" id="courierAddress" placeholder="Courier Address">
+        <button onclick="assignCourier(document.getElementById('courierAddress').value)">Assign Courier</button>
+    </div>
+
+    <div>
+        <h2>Confirm Delivery</h2>
+        <button onclick="confirmDelivery()">Confirm Delivery</button>
+    </div>
+
+    <div>
+        <h2>Withdraw Excess</h2>
+        <button onclick="withdrawExcessFunds()">Withdraw</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
