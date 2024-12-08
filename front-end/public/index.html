@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goods Marketplace</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lottery DApp</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Goods Marketplace</h1>
-    <div id="walletAddress">Connecting to MetaMask...</div>
-    <h1>Goods Marketplace</h1>
+  <h1>Lottery DApp</h1>
+  <p id="walletAddress">Status: Not connected</p>
 
-    <div>
-        <h2>Purchase Goods</h2>
-        <button onclick="purchaseGoods()">Purchase</button>
-    </div>
+  <button id="connectMetaMask">Connect MetaMask</button>
 
-    <div>
-        <h2>Assign Courier</h2>
-        <input type="text" id="courierAddress" placeholder="Courier Address">
-        <button onclick="assignCourier(document.getElementById('courierAddress').value)">Assign Courier</button>
-    </div>
+  <div>
+    <label>Ticket Price (ETH): <span id="ticketPrice">N/A</span></label>
+  </div>
 
-    <div>
-        <h2>Confirm Delivery</h2>
-        <button onclick="confirmDelivery()">Confirm Delivery</button>
-    </div>
+  <div>
+    <button id="enterLottery">Enter Lottery</button>
+  </div>
 
-    <div>
-        <h2>Withdraw Excess</h2>
-        <button onclick="withdrawExcessFunds()">Withdraw</button>
-    </div>
+  <div>
+    <button id="viewBalance">View Contract Balance</button>
+    <button id="viewParticipants">View Participants</button>
+  </div>
 
-    <script src="app.js"></script>
+  <div>
+    <button id="pickWinner" style="background-color: #dc3545;">Pick Winner</button>
+  </div>
+
+  <div class="output" id="output">Output will appear here...</div>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>

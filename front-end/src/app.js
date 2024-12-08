@@ -1,73 +1,15 @@
 import { ethers } from "ethers";
-import { BrowserProvider, Contract } from "ethers";
-// import { parseEther } from "ethers";
-// import { purchaseGoods, assignCourier, confirmDelivery, withdrawExcessFunds} from "./app.js";
-
-// Expose functions to the global scope
-window.purchaseGoods = purchaseGoods;
-window.assignCourier = assignCourier;
-window.confirmDelivery = confirmDelivery;
-window.withdrawExcessFunds = withdrawExcessFunds;
-
-// Connect to MetaMask
-async function connectMetaMask() {
-    if (typeof window.ethereum !== "undefined") {
-        try {
-            const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-            console.log("Connected account:", accounts[0]);
-            document.getElementById("walletAddress").textContent = `Connected: ${accounts[0]}`;
-        } catch (error) {
-            console.error("User denied account access", error);
-            alert("Please connect to MetaMask to use this app.");
-        }
-    } else {
-        alert("MetaMask is not installed. Please install MetaMask to use this app.");
-    }
-}
-
-window.addEventListener("load", connectMetaMask);
-
-async function checkConnection() {
-    if (typeof window.ethereum !== "undefined") {
-        const accounts = await window.ethereum.request({ method: "eth_accounts" });
-        if (accounts.length > 0) {
-            document.getElementById("walletAddress").textContent = `Connected: ${accounts[0]}`;
-        }
-    }
-}
-
-window.addEventListener("load", checkConnection);
-
-if (window.ethereum) {
-    window.ethereum.on("accountsChanged", (accounts) => {
-        if (accounts.length > 0) {
-            document.getElementById("walletAddress").textContent = `Connected: ${accounts[0]}`;
-        } else {
-            document.getElementById("walletAddress").textContent = "Disconnected";
-        }
-    });
-
-    window.ethereum.on("chainChanged", (chainId) => {
-        console.log("Network changed to:", chainId);
-        window.location.reload();
-    });
-}
 
 const contractABI = [
     {
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_price",
+                "name": "_ticketPrice",
                 "type": "uint256"
-            },
-            {
-                "internalType": "string",
-                "name": "_description",
-                "type": "string"
             }
         ],
-        "stateMutability": "nonpayable",
+        "stateMutability": "payable",
         "type": "constructor"
     },
     {
@@ -76,178 +18,87 @@ const contractABI = [
             {
                 "indexed": true,
                 "internalType": "address",
-                "name": "courier",
-                "type": "address"
-            }
-        ],
-        "name": "CourierAssigned",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "buyer",
-                "type": "address"
-            }
-        ],
-        "name": "DeliveryConfirmed",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "buyer",
+                "name": "winner",
                 "type": "address"
             },
             {
                 "indexed": false,
                 "internalType": "uint256",
-                "name": "amount",
+                "name": "amountWon",
                 "type": "uint256"
             }
         ],
-        "name": "ExcessFundsWithdrawn",
+        "name": "LotteryWinner",
         "type": "event"
     },
     {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "buyer",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "description",
-                "type": "string"
-            }
-        ],
-        "name": "GoodsPurchased",
-        "type": "event"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_courier",
-                "type": "address"
-            }
-        ],
-        "name": "assignCourier",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
         "inputs": [],
-        "name": "buyer",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "confirmDelivery",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "courier",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "description",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "isDelivered",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "isSold",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "price",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "purchaseGoods",
+        "name": "enter",
         "outputs": [],
         "stateMutability": "payable",
         "type": "function"
     },
     {
         "inputs": [],
-        "name": "seller",
+        "name": "getBalance",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getParticipants",
+        "outputs": [
+            {
+                "internalType": "address[]",
+                "name": "",
+                "type": "address[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "isLotteryOpen",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "participants",
         "outputs": [
             {
                 "internalType": "address",
@@ -260,74 +111,145 @@ const contractABI = [
     },
     {
         "inputs": [],
-        "name": "withdrawExcessFunds",
+        "name": "pickWinner",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_newTicketPrice",
+                "type": "uint256"
+            }
+        ],
+        "name": "startNewLottery",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "ticketPrice",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
     }
 ];
-const contractAddress = "0x6d3f3c0C941395faE6Ce2a6726BA285eAe6f7078";
+const contractAddress = "0x73217AA1A39917cBEB549dc8be17912508596109";
 
+let provider, signer, lotteryContract;
+
+// Initialize the contract
 async function initialize() {
-    if (!window.ethereum) {
-        alert("MetaMask is required!");
-        return;
-    }
+  if (!window.ethereum) {
+    alert("MetaMask is required!");
+    return;
+  }
 
-    const provider = new BrowserProvider(window.ethereum);
-    const signer = await provider.getSigner();
-    const contract = new Contract(contractAddress, contractABI, signer);
+  provider = new ethers.BrowserProvider(window.ethereum);
+  signer = await provider.getSigner();
+  lotteryContract = new ethers.Contract(contractAddress, contractABI, signer);
 
-    return { contract, signer };
+  return { contract: lotteryContract, signer };
 }
 
-async function purchaseGoods() {
-    const { contract, signer } = await initialize();
-    const priceInWei = ethers.utils.parseEther("1.0"); // Replace with actual price if dynamic
+// Connect MetaMask
+async function connectMetaMask() {
+  if (typeof window.ethereum !== "undefined") {
     try {
-        const transaction = await contract.purchaseGoods({ value: priceInWei });
-        await transaction.wait();
-        alert("Goods purchased successfully!");
+      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+      document.getElementById("walletAddress").textContent = `Connected: ${accounts[0]}`;
+      await fetchTicketPrice();
     } catch (error) {
-        console.error(error);
-        alert("Transaction failed!");
+      console.error("User denied account access", error);
+      alert("Please connect to MetaMask to use this app.");
     }
+  } else {
+    alert("MetaMask is not installed. Please install MetaMask to use this app.");
+  }
 }
 
-async function assignCourier(courierAddress) {
-    const { contract } = await initialize();
-    try {
-        const transaction = await contract.assignCourier(courierAddress);
-        await transaction.wait();
-        alert("Courier assigned successfully!");
-    } catch (error) {
-        console.error(error);
-        alert("Transaction failed!");
-    }
+// Fetch and display ticket price
+async function fetchTicketPrice() {
+  if (!lotteryContract) return;
+  try {
+    const ticketPrice = await lotteryContract.ticketPrice();
+    document.getElementById("ticketPrice").textContent = ethers.formatEther(ticketPrice);
+  } catch (error) {
+    console.error("Error fetching ticket price:", error);
+  }
 }
 
-async function confirmDelivery() {
-    const { contract } = await initialize();
-    try {
-        const transaction = await contract.confirmDelivery();
-        await transaction.wait();
-        alert("Delivery confirmed!");
-    } catch (error) {
-        console.error(error);
-        alert("Transaction failed!");
-    }
+// Enter the lottery
+async function enterLottery() {
+  if (!lotteryContract) return;
+  const ticketPrice = await lotteryContract.ticketPrice();
+  try {
+    const transaction = await lotteryContract.enter({ value: ticketPrice });
+    await transaction.wait();
+    showOutput("You have successfully entered the lottery!");
+  } catch (error) {
+    console.error("Error entering lottery:", error);
+    showOutput("Error entering lottery: " + error.message);
+  }
 }
 
-async function withdrawExcessFunds() {
-    const { contract } = await initialize();
-    try {
-        const transaction = await contract.withdrawExcessFunds();
-        await transaction.wait();
-        alert("Excess funds withdrawn successfully!");
-    } catch (error) {
-        console.error(error);
-        alert("Transaction failed!");
-    }
+// View contract balance
+async function viewBalance() {
+  if (!lotteryContract) return;
+  try {
+    const balance = await lotteryContract.getBalance();
+    showOutput("Contract Balance: " + ethers.formatEther(balance) + " ETH");
+  } catch (error) {
+    console.error("Error fetching balance:", error);
+    showOutput("Error fetching balance: " + error.message);
+  }
 }
 
-export { purchaseGoods, assignCourier, confirmDelivery, withdrawExcessFunds};
+// View participants
+async function viewParticipants() {
+  if (!lotteryContract) return;
+  try {
+    const participants = await lotteryContract.getParticipants();
+    showOutput("Participants: " + participants.join(", "));
+  } catch (error) {
+    console.error("Error fetching participants:", error);
+    showOutput("Error fetching participants: " + error.message);
+  }
+}
+
+// Pick a winner
+async function pickWinner() {
+  if (!lotteryContract) return;
+  try {
+    const transaction = await lotteryContract.pickWinner();
+    await transaction.wait();
+    showOutput("Winner has been picked! Check events for details.");
+  } catch (error) {
+    console.error("Error picking winner:", error);
+    showOutput("Error picking winner: " + error.message);
+  }
+}
+
+// Utility function to display output
+function showOutput(message) {
+  document.getElementById("output").innerText = message;
+}
+
+// Event listeners
+document.getElementById("connectMetaMask").addEventListener("click", connectMetaMask);
+document.getElementById("enterLottery").addEventListener("click", enterLottery);
+document.getElementById("viewBalance").addEventListener("click", viewBalance);
+document.getElementById("viewParticipants").addEventListener("click", viewParticipants);
+document.getElementById("pickWinner").addEventListener("click", pickWinner);
+
+// Initialize on load
+window.addEventListener("load", initialize);
