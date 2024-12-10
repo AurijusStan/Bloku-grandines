@@ -1,36 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lottery DApp</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lottery</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Lottery DApp</h1>
-  <p id="walletAddress">Status: Not connected</p>
+    <header>
+        <h1>Lottery</h1>
+    </header>
 
-  <button id="connectMetaMask">Connect MetaMask</button>
+    <main>
+        <div id="walletSection">
+            <button id="connectMetaMask">Connect Wallet</button>
+            <p id="walletAddress">Not connected</p>
+        </div>
 
-  <div>
-    <label>Ticket Price (ETH): <span id="ticketPrice">N/A</span></label>
-  </div>
+        <div id="lotteryInfo">
+            <p class="highlight">Ticket Price: <span id="ticketPrice">Loading...</span> ETH</p>
+            <button id="enterLottery">Enter Lottery</button>
+        </div>
 
-  <div>
-    <button id="enterLottery">Enter Lottery</button>
-  </div>
+        <div id="ownerActions" style="display: none;">
+            <h2>Owner Actions</h2>
+            <button id="viewBalance">View Contract Balance</button>
+            <button id="viewParticipants">View Participants</button>
+            <button id="pickWinner">Pick Winner</button>
+            <div>
+                <input type="text" id="newTicketPrice" placeholder="New Ticket Price (ETH)">
+                <button id="startNewLottery">Start New Lottery</button>
+            </div>
+        </div>
 
-  <div>
-    <button id="viewBalance">View Contract Balance</button>
-    <button id="viewParticipants">View Participants</button>
-  </div>
+        <div id="output" class="output"></div>
+    </main>
 
-  <div>
-    <button id="pickWinner" style="background-color: #dc3545;">Pick Winner</button>
-  </div>
+    <script src="bundle.js"></script>
 
-  <div class="output" id="output">Output will appear here...</div>
-
-  <script type="module" src="app.js"></script>
+    <footer>
+        <p>Powered by Ethereum</p>
+    </footer>
 </body>
 </html>

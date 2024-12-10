@@ -1,0 +1,159 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f4f4f9;
+}
+
+header {
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: white;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+main {
+  flex: 1;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+footer {
+  background: #333;
+  color: white;
+  text-align: center;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+#walletSection {
+  margin-bottom: 1rem;
+}
+
+#walletSection button {
+  background-color: #007bff;
+  color: white;
+  padding: 0.7rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#walletSection button:hover {
+  background-color: #0056b3;
+}
+
+#walletAddress {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  color: #555;
+}
+
+#lotteryInfo {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.highlight {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #333;
+}
+
+#enterLottery {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  background-color: #4CAF50;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.3s;
+  animation: pulse 1.5s infinite;
+  display: inline-block;
+  margin: 1rem auto;
+}
+
+#enterLottery:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+@keyframes pulse {
+  0%, 100% {
+      transform: scale(1);
+  }
+  50% {
+      transform: scale(1.1);
+  }
+}
+
+#ownerActions {
+  width: 100%;
+  max-width: 500px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+#ownerActions h2 {
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  color: #4CAF50;
+}
+
+#ownerActions button {
+  margin: 0.5rem auto;
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  display: block;
+}
+
+#ownerActions button:hover {
+  background-color: #0056b3;
+}
+
+#newTicketPrice {
+  width: calc(100% - 1rem);
+  padding: 0.7rem;
+  font-size: 1rem;
+  margin-top: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.output {
+  margin-top: 1rem;
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #333;
+  width: calc(100% - 2rem);
+  max-width: 500px;
+  text-align: center;
+}

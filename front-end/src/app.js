@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import './style.css';
 
 const contractABI = [
     {
@@ -145,9 +146,8 @@ const contractABI = [
 ];
 const contractAddress = "0x73217AA1A39917cBEB549dc8be17912508596109";
 
-let provider, signer, lotteryContract;
+let provider, signer, lotteryContract, ownerAddress;
 
-// Initialize the contract
 async function initialize() {
   if (!window.ethereum) {
     alert("MetaMask is required!");
@@ -158,16 +158,22 @@ async function initialize() {
   signer = await provider.getSigner();
   lotteryContract = new ethers.Contract(contractAddress, contractABI, signer);
 
+  ownerAddress = await lotteryContract.owner();
   return { contract: lotteryContract, signer };
 }
 
-// Connect MetaMask
 async function connectMetaMask() {
   if (typeof window.ethereum !== "undefined") {
     try {
       const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
       document.getElementById("walletAddress").textContent = `Connected: ${accounts[0]}`;
       await fetchTicketPrice();
+
+      if (accounts[0].toLowerCase() === ownerAddress.toLowerCase()) {
+        document.getElementById("ownerActions").style.display = "block";
+      } else {
+        document.getElementById("ownerActions").style.display = "none";
+      }
     } catch (error) {
       console.error("User denied account access", error);
       alert("Please connect to MetaMask to use this app.");
@@ -177,7 +183,6 @@ async function connectMetaMask() {
   }
 }
 
-// Fetch and display ticket price
 async function fetchTicketPrice() {
   if (!lotteryContract) return;
   try {
@@ -188,7 +193,6 @@ async function fetchTicketPrice() {
   }
 }
 
-// Enter the lottery
 async function enterLottery() {
   if (!lotteryContract) return;
   const ticketPrice = await lotteryContract.ticketPrice();
@@ -202,7 +206,6 @@ async function enterLottery() {
   }
 }
 
-// View contract balance
 async function viewBalance() {
   if (!lotteryContract) return;
   try {
@@ -214,7 +217,6 @@ async function viewBalance() {
   }
 }
 
-// View participants
 async function viewParticipants() {
   if (!lotteryContract) return;
   try {
@@ -226,30 +228,48 @@ async function viewParticipants() {
   }
 }
 
-// Pick a winner
 async function pickWinner() {
   if (!lotteryContract) return;
   try {
     const transaction = await lotteryContract.pickWinner();
     await transaction.wait();
-    showOutput("Winner has been picked! Check events for details.");
+    showOutput("Winner has been picked!");
   } catch (error) {
     console.error("Error picking winner:", error);
     showOutput("Error picking winner: " + error.message);
   }
 }
 
-// Utility function to display output
+async function startNewLottery() {
+  if (!lotteryContract) return;
+  const newTicketPriceInput = document.getElementById("newTicketPrice").value;
+
+  if (!newTicketPriceInput || isNaN(newTicketPriceInput) || parseFloat(newTicketPriceInput) <= 0) {
+    alert("Please enter a valid ticket price in ETH.");
+    return;
+  }
+
+  const newTicketPrice = ethers.parseEther(newTicketPriceInput);
+  try {
+    const transaction = await lotteryContract.startNewLottery(newTicketPrice);
+    await transaction.wait();
+    showOutput("New lottery started with ticket price: " + newTicketPriceInput + " ETH");
+    fetchTicketPrice();
+  } catch (error) {
+    console.error("Error starting new lottery:", error);
+    showOutput("Error starting new lottery: " + error.message);
+  }
+}
+
 function showOutput(message) {
   document.getElementById("output").innerText = message;
 }
 
-// Event listeners
 document.getElementById("connectMetaMask").addEventListener("click", connectMetaMask);
 document.getElementById("enterLottery").addEventListener("click", enterLottery);
 document.getElementById("viewBalance").addEventListener("click", viewBalance);
 document.getElementById("viewParticipants").addEventListener("click", viewParticipants);
 document.getElementById("pickWinner").addEventListener("click", pickWinner);
+document.getElementById("startNewLottery").addEventListener("click", startNewLottery);
 
-// Initialize on load
 window.addEventListener("load", initialize);
