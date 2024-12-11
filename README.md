@@ -9,7 +9,7 @@
 
 #### Sutarties funkcijos
 
-* "Enter" - pirkti bilietą.
+* enter - pirkti bilietą.
 * pickWinner - parenka nugalėtoją.
 * startNewLottery - pradėti naują loteriją ir nustatyti bilieto kainą.
 * getBalance - parodo sutartyje esančius bilietų fondus.
